@@ -1,43 +1,27 @@
 "use client";
 
-import useAuthModal from "@/hooks/useAuthModal";
-import Modal from "./shared/Modal";
 import {
   useSessionContext,
   useSupabaseClient,
 } from "@supabase/auth-helpers-react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useEffect } from "react";
 
-const AuthModal = () => {
-  const { onClose, isOpen } = useAuthModal();
+export const LoginContent: React.FC = () => {
   const supabaseClient = useSupabaseClient();
   const router = useRouter();
-
   const { session } = useSessionContext();
 
   useEffect(() => {
     if (session?.user) {
-      router.refresh();
-      onClose();
+      redirect("/dashboard");
     }
-  }, [session, router, onClose]);
-
-  const onChange = (open: boolean) => {
-    if (!open) {
-      onClose();
-    }
-  };
+  }, [session, router]);
 
   return (
-    <Modal
-      title='Welcome back'
-      description='Login into your account'
-      isOpen={isOpen}
-      onChange={onChange}
-    >
+    <div className='flex flex-col gap-y-2 w-full p-6'>
       <Auth
         theme='dark'
         magicLink
@@ -55,8 +39,6 @@ const AuthModal = () => {
           },
         }}
       />
-    </Modal>
+    </div>
   );
 };
-
-export default AuthModal;
