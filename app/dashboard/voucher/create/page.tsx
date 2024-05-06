@@ -1,10 +1,11 @@
 // import Form from "@/app/ui/invoices/create-form";
 // import { fetchCustomers } from "@/app/lib/data";
+import getBrandNames from "@/app/actions/getBrandNames";
 import Breadcrumbs from "@/app/components/layout/breadcrumbs";
-import Form from "@/app/components/metadata/create-form";
+import Form from "@/app/components/voucher/create-form";
 
 export default async function Page() {
-  //   const customers = await fetchCustomers();
+  const brands = await getBrandNames();
 
   return (
     <main>
@@ -18,7 +19,7 @@ export default async function Page() {
           },
         ]}
       />
-      <Form />
+      <Form brands={brands} />
     </main>
   );
 }

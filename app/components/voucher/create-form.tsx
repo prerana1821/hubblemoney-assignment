@@ -1,48 +1,38 @@
 "use client";
 
-import { useState } from "react";
-import { BrandData, ImageFileData, VoucherManagementData } from "@/types/app";
+import { FormEvent, useState } from "react";
+import { Brand, VoucherManagementData } from "@/types/app";
 import LabeledInput from "../shared/labeled-input";
 import LabeledTextarea from "../shared/labeled-textarea";
 import LabeledSelect from "../shared/labeled-select";
 import LabeledRadio from "../shared/labeled-radio";
 import { FileUploader } from "../shared/file-uploader";
+import { deleteFile, uploadFiles } from "@/app/utils/file-handling";
+import toast from "react-hot-toast";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useRouter } from "next/navigation";
+import uniqid from "uniqid";
+import Link from "next/link";
+import { Button } from "../shared/button";
 
-export default function Form() {
-  const [formData, setFormData] = useState<{
-    brand: BrandData;
-    voucher: VoucherManagementData;
-  }>({
-    brand: {
-      logo: { name: "", photo: "", type: "", size: 0, file: null },
-      name: "",
-      description: "",
-      category: "groceries",
-      status: "active",
-    },
-    voucher: {
-      brandName: "",
-      bannerImage: { name: "", photo: "", type: "", size: 0, file: null },
-      discountPercentage: 0,
-      expirationDate: "",
-      FAQs: [{ question: "", answer: "" }],
-      highlightsDescription: "",
-      highlights: [{ title: "", text: "" }],
-    },
-  });
+const voucherFormInitialState: VoucherManagementData = {
+  brandName: "",
+  bannerImage: { name: "", photo: "", type: "", size: 0, file: null },
+  discountPercentage: 0,
+  expirationDate: "",
+  FAQs: [{ question: "", answer: "" }],
+  highlightsDescription: "",
+  highlights: [{ title: "", text: "" }],
+};
 
-  const handleBrandChange = (
-    event: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
-    fieldname: string
-  ) => {
-    const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      brand: { ...formData.brand, [fieldname]: value },
-    });
-  };
+export default function Form({ brands }: { brands: Brand[] }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const supabaseClient = useSupabaseClient();
+  const router = useRouter();
+
+  const [formData, setFormData] = useState<VoucherManagementData>(
+    voucherFormInitialState
+  );
 
   const handleVoucherChange = (
     event: React.ChangeEvent<
@@ -53,10 +43,7 @@ export default function Form() {
 
     setFormData({
       ...formData,
-      voucher: {
-        ...formData.voucher,
-        [name]: value,
-      },
+      [name]: value,
     });
   };
 
@@ -67,15 +54,12 @@ export default function Form() {
     >
   ) => {
     const { name, value } = event.target;
-    const FAQs = [...formData.voucher.FAQs];
+    const FAQs = [...formData.FAQs];
     if (name === "question" || name === "answer") {
       FAQs[index][name] = value;
       setFormData({
         ...formData,
-        voucher: {
-          ...formData.voucher,
-          FAQs,
-        },
+        FAQs,
       });
     }
   };
@@ -87,175 +71,115 @@ export default function Form() {
     >
   ) => {
     const { name, value } = event.target;
-    const highlights = [...formData.voucher.highlights];
+    const highlights = [...formData.highlights];
     if (name === "title" || name === "text") {
       highlights[index][name] = value;
       setFormData({
         ...formData,
-        voucher: {
-          ...formData.voucher,
-          highlights,
-        },
+        highlights,
       });
     }
   };
 
-  function uploadFiles(files: ImageFileData[], id: string) {
-    const updatedFormData = { ...formData };
-    const updatedBrand = { ...formData.brand };
-    const updatedVoucher = { ...formData.voucher };
-
-    files.forEach((file, index) => {
-      if (index === 0) {
-        if (id === "logo") {
-          updatedBrand.logo = {
-            name: file.name,
-            photo: file.photo,
-            type: file.type,
-            size: file.size,
-            file: file.file,
-          };
-        } else {
-          updatedVoucher.bannerImage = {
-            name: file.name,
-            photo: file.photo,
-            type: file.type,
-            size: file.size,
-            file: file.file,
-          };
-        }
-      }
-    });
-
-    updatedFormData.brand = updatedBrand;
-    updatedFormData.voucher = updatedVoucher;
-    setFormData(updatedFormData);
-  }
-
-  function deleteFile(id: string) {
-    const updatedFormData = { ...formData };
-    if (id === "logo") {
-      updatedFormData.brand.logo = {
-        name: "",
-        photo: "",
-        type: "",
-        size: 0,
-        file: null,
-      };
-    } else {
-      updatedFormData.voucher.bannerImage = {
-        name: "",
-        photo: "",
-        type: "",
-        size: 0,
-        file: null,
-      };
-    }
-    setFormData(updatedFormData);
-  }
-
   const addFAQ = () => {
     setFormData({
       ...formData,
-      voucher: {
-        ...formData.voucher,
-        FAQs: [...formData.voucher.FAQs, { question: "", answer: "" }],
-      },
+      FAQs: [...formData.FAQs, { question: "", answer: "" }],
     });
   };
 
   const addHighlight = () => {
     setFormData({
       ...formData,
-      voucher: {
-        ...formData.voucher,
-        highlights: [...formData.voucher.highlights, { title: "", text: "" }],
-      },
+      highlights: [...formData.highlights, { title: "", text: "" }],
     });
   };
 
-  return (
-    <form>
-      {/* Brand Section */}
-      <div className='rounded-md bg-gray-50 p-4 md:p-6'>
-        <h3 className='text-2xl font-bold mb-4'>Brand Details: </h3>
-        <div className='ml-4'>
-          <FileUploader
-            id='logo'
-            label={"Select a logo file"}
-            ownerLicense={[formData.brand.logo]}
-            onUpload={uploadFiles}
-            onDelete={deleteFile}
-            count={1}
-            formats={["jpg", "jpeg", "png"]}
-          />
-          <LabeledInput
-            id='name'
-            // disabled={isLoading}
-            type='text'
-            label={"Brand Name"}
-            name='name'
-            value={formData.brand.name}
-            className='mt-1 block w-full rounded-md border-gray-300'
-            onChange={(e) => handleBrandChange(e, "name")}
-            required={true}
-            placeholder='Brand Name'
-          />
-          <LabeledTextarea
-            id='description'
-            rows={4}
-            placeholder='Write the description here...'
-            label='Brand Description'
-            name='description'
-            required={true}
-            value={formData.brand.description}
-            onChange={(e) => handleBrandChange(e, "description")}
-            // error={state.errors?.message} // Pass the error message from your form state
-          />
-          <LabeledSelect
-            id='category'
-            label='Choose category'
-            defaultValue=''
-            name='category'
-            value={formData.brand.category}
-            onChange={(e) => handleBrandChange(e, "category")}
-            // error={state.errors?.customerId}
-          >
-            <option value='' disabled>
-              Select a category
-            </option>
-            <option value='groceries'>Groceries</option>
-            <option value='fashion'>Fashion</option>
-            <option value='beauty'>Beauty</option>
-            <option value='travel'>Travel</option>
-          </LabeledSelect>
+  const handleFormSubmit = async (e: FormEvent) => {
+    e.preventDefault();
 
-          <LabeledRadio
-            id='status'
-            name='status'
-            label='Set the brand status'
-            options={[
-              { label: "Pending", value: "pending" },
-              { label: "Paid", value: "paid" },
-              { label: "Verified", value: "verified" },
-            ]}
-            value={formData.brand.status}
-            // checked={formData.brand.status === "verified"}
-            onChange={(e) => handleBrandChange(e, "status")}
-            // onChange={handleBrandChange}
-            // error={state.errors?.status}
-          />
-        </div>
-      </div>
+    try {
+      setIsLoading(true);
+      if (!formData.bannerImage?.file) {
+        setIsLoading(false);
+        return toast.error("Missing Banner Image File.");
+      }
+
+      const uniqueID = uniqid();
+
+      const { data: bannerData, error: bannerError } =
+        await supabaseClient.storage
+          .from("banners")
+          .upload(
+            `banner-${formData.bannerImage.name}-${uniqueID}`,
+            formData.bannerImage.file,
+            {
+              cacheControl: "3600",
+              upsert: false,
+            }
+          );
+
+      if (bannerError) {
+        console.error({ bannerError });
+        setIsLoading(false);
+        return toast.error("Failed Banner Image upload.");
+      }
+
+      const selectedBrandId = brands.find(
+        (brand) => brand.name === formData.brandName
+      );
+
+      const { error: supabaseError } = await supabaseClient
+        .from("vouchers")
+        .insert({
+          brand_id: selectedBrandId?.id,
+          banner_path: bannerData.path,
+          discount_percentage: formData.discountPercentage,
+          expiration_date: formData.expirationDate,
+          faq: JSON.stringify(formData.FAQs),
+          highlights: JSON.stringify({
+            description: formData.highlightsDescription,
+            list: formData.highlights,
+          }),
+        });
+
+      if (supabaseError) {
+        setIsLoading(false);
+        return toast.error(supabaseError.message);
+      }
+
+      router.refresh();
+      setIsLoading(false);
+      toast.success("Brand Metadata is added!");
+      setFormData(voucherFormInitialState);
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleFormSubmit}>
       <div className='rounded-md bg-gray-50 p-4 md:p-6'>
         <h3 className='text-2xl font-bold mb-4'>Voucher Management: </h3>
         <div className='ml-4'>
           <FileUploader
             id='banner'
             label={"Select a banner image file"}
-            ownerLicense={[formData.voucher.bannerImage]}
-            onUpload={uploadFiles}
-            onDelete={deleteFile}
+            ownerLicense={[formData.bannerImage]}
+            onUpload={(rawfiles) => {
+              const updatedFormData = uploadFiles(
+                rawfiles,
+                "voucherBanner",
+                formData
+              );
+              setFormData(updatedFormData as VoucherManagementData);
+            }}
+            onDelete={() => {
+              const updatedFormData = deleteFile("voucherBanner", formData);
+              setFormData(updatedFormData as VoucherManagementData);
+            }}
             count={1}
             formats={["jpg", "jpeg", "png"]}
           />
@@ -265,18 +189,19 @@ export default function Form() {
             placeholder='Write the description here...'
             label='Highlights Description: '
             name='highlightsDescription'
+            disabled={isLoading}
             required={true}
-            value={formData.voucher.highlightsDescription}
+            value={formData.highlightsDescription}
             onChange={handleVoucherChange}
             // error={state.errors?.message} // Pass the error message from your form state
           />
           <LabeledInput
             id='discountPercentage'
-            // disabled={isLoading}
             type='number'
             label={"Discount Percentage"}
+            disabled={isLoading}
             name='discountPercentage'
-            value={formData.voucher.discountPercentage}
+            value={formData.discountPercentage}
             className='mt-1 block w-full rounded-md border-gray-300'
             onChange={handleVoucherChange}
             required={true}
@@ -285,30 +210,29 @@ export default function Form() {
           <LabeledSelect
             id='brandName'
             label='Choose brand name'
-            defaultValue=''
             name='brandName'
-            value={formData.voucher.brandName}
+            value={formData.brandName}
             onChange={handleVoucherChange}
-            // onChange={handleBrandChange}
-            custom={true}
+            disabled={isLoading}
             // error={state.errors?.customerId}
           >
             <option value='' disabled>
-              Select a category
+              Select a brand
             </option>
-            <option value='groceries'>Groceries</option>
-            <option value='fashion'>Fashion</option>
-            <option value='beauty'>Beauty</option>
-            <option value='travel'>Travel</option>
+            {brands?.map((brand: Brand) => (
+              <option value={brand.name} key={brand.id}>
+                {brand.name}
+              </option>
+            ))}
           </LabeledSelect>
 
           <LabeledInput
             id='expirationDate'
-            // disabled={isLoading}
+            disabled={isLoading}
             type='datetime-local'
             label={"Expiration Date:"}
             name='expirationDate'
-            value={formData.voucher.expirationDate}
+            value={formData.expirationDate}
             className='mt-1 block w-full rounded-md border-gray-300'
             onChange={handleVoucherChange}
             required={true}
@@ -325,11 +249,11 @@ export default function Form() {
                 Add FAQ
               </button>
             </div>
-            {formData.voucher.FAQs.map((faq, index) => (
+            {formData.FAQs.map((faq, index) => (
               <div key={index} className='mb-2'>
                 <LabeledInput
                   id='faq-question-index'
-                  // disabled={isLoading}
+                  disabled={isLoading}
                   type='text'
                   label={"Question"}
                   name='question'
@@ -345,6 +269,7 @@ export default function Form() {
                   placeholder='Write the answer here...'
                   label='Answer: '
                   name='answer'
+                  disabled={isLoading}
                   required={true}
                   value={faq.answer}
                   onChange={(e) => handleFAQChange(index, e)}
@@ -364,11 +289,11 @@ export default function Form() {
                 Add Highlight
               </button>
             </div>
-            {formData.voucher.highlights.map((highlight, index) => (
+            {formData.highlights.map((highlight, index) => (
               <div key={index} className='mb-2'>
                 <LabeledInput
                   id='highlight-title-index'
-                  // disabled={isLoading}
+                  disabled={isLoading}
                   type='text'
                   label={"Question"}
                   name='title'
@@ -384,6 +309,7 @@ export default function Form() {
                   placeholder='Write the description here...'
                   label='Description: '
                   name='text'
+                  disabled={isLoading}
                   required={true}
                   value={highlight.text}
                   onChange={(e) => handleHighlightChange(index, e)}
@@ -393,6 +319,15 @@ export default function Form() {
             ))}
           </div>
         </div>
+      </div>
+      <div className='mt-6 flex justify-end gap-4'>
+        <Link
+          href='/dashboard/voucher'
+          className='flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200'
+        >
+          Cancel
+        </Link>
+        <Button type='submit'>Add Brand Voucher</Button>
       </div>
     </form>
   );

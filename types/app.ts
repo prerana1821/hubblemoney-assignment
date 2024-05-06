@@ -4,6 +4,11 @@ export interface UserDetails {
   avatar_url?: string;
 }
 
+export interface Brand {
+  id: string;
+  name: string;
+}
+
 export interface BrandData {
   logo: ImageFileData;
   name: string;
