@@ -7,6 +7,7 @@ interface LabeledTextareaProps
   label: string;
   error?: string | null;
   value?: string;
+  name?: string;
   onChange?: (
     event: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -15,7 +16,7 @@ interface LabeledTextareaProps
 }
 
 const LabeledTextarea = forwardRef<HTMLTextAreaElement, LabeledTextareaProps>(
-  ({ label, value, onChange, error, className, ...props }, ref) => {
+  ({ label, value, onChange, error, name, className, ...props }, ref) => {
     return (
       <div className='mb-4'>
         <label htmlFor={props.id} className='mb-2 block text-sm font-medium'>
@@ -24,7 +25,9 @@ const LabeledTextarea = forwardRef<HTMLTextAreaElement, LabeledTextareaProps>(
         <div className='relative mt-2 rounded-md flex items-start'>
           <textarea
             ref={ref}
+            id={props.id}
             {...props}
+            name={name}
             value={value}
             onChange={onChange}
             className={twMerge(

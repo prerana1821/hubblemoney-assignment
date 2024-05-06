@@ -37,4 +37,5 @@ export interface ImageFileData {
   photo: string;
   type: string;
   size: number;
+  file: File | null;
 }

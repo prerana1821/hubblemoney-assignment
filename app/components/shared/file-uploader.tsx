@@ -2,17 +2,21 @@ import { useRef, useEffect, useState } from "react";
 import { FaUpload, FaRegFileImage, FaRegFile } from "react-icons/fa";
 import { BsX } from "react-icons/bs";
 import { ImageFileData } from "@/types/app";
+import toast from "react-hot-toast";
+import Image from "next/image";
 
 interface FileUploaderProps {
+  id: string;
   label: string;
   ownerLicense: ImageFileData[];
-  onUpload: (files: ImageFileData[]) => void;
-  onDelete: (index: number) => void;
+  onUpload: (rawfiles: ImageFileData[], id: string) => void;
+  onDelete: (id: string) => void;
   count: number;
   formats: string[];
 }
 
 export function FileUploader({
+  id,
   label,
   ownerLicense,
   onUpload,
@@ -28,69 +32,69 @@ export function FileUploader({
     e: DragEvent | React.ChangeEvent<HTMLInputElement>,
     type: "inputFile" | "dropArea"
   ) {
-    let files: File[] = [];
+    let files: FileList | [] = [];
+
+    console.log(e.target);
 
     if (type === "inputFile") {
       const inputElement = e.target as HTMLInputElement;
-      files = Array.from(inputElement.files || []);
+      console.log(1, inputElement.files);
+      console.log(files);
+      files = inputElement.files ? inputElement.files : [];
     } else {
       const dragEvent = e as DragEvent;
       if (dragEvent.dataTransfer) {
         dragEvent.preventDefault();
         dragEvent.stopPropagation();
         setDragging(false);
-        files = Array.from(dragEvent.dataTransfer.files);
+        files = dragEvent.dataTransfer.files
+          ? dragEvent.dataTransfer.files
+          : [];
       }
     }
 
-    const allFilesValid = files.every((file) => {
+    const allFilesValid = Array.from(files).every((file) => {
       return formats.some((format) => file.type.endsWith(`/${format}`));
     });
 
-    if (ownerLicense.length >= count) {
-      showAlert(
-        "warning",
-        "Maximum Files",
-        `Only ${count} files can be uploaded`
-      );
+    if (ownerLicense.length > count) {
+      toast.error(`Only ${count} files can be uploaded`);
       return;
     }
+
     if (!allFilesValid) {
-      showAlert(
-        "warning",
-        "Invalid Media",
+      toast.error(
         `Invalid file format. Please only upload ${formats
           .join(", ")
           .toUpperCase()}`
       );
       return;
     }
+
     if (count && count < files.length) {
-      showAlert(
-        "error",
-        "Error",
+      toast.error(
         `Only ${count} file${count !== 1 ? "s" : ""} can be uploaded at a time`
       );
       return;
     }
 
+    console.log({ files });
+
     if (files && files.length) {
-      const nFiles = files.map(async (file) => {
+      // TODO: write try catch
+      const nFiles = Array.from(files).map(async (file) => {
         const base64String = await convertFileBase64(file);
         return {
           name: file.name,
           photo: base64String,
           type: file.type,
           size: file.size,
+          file: file,
         };
       });
 
       Promise.all(nFiles).then((newFiles) => {
-        onUpload(newFiles as ImageFileData[]);
-        // TopNotification.fire({
-        //   icon: "success",
-        //   title: "Image(s) uploaded",
-        // });
+        onUpload(newFiles, id);
       });
     }
   }
@@ -128,34 +132,25 @@ export function FileUploader({
     return () => {
       if (dropContainer.current) {
         dropContainer.current.removeEventListener("dragover", handleDragOver);
-        // dropContainer.current.removeEventListener("drop", (e) => {
-        //   if (e instanceof DragEvent) {
-        //     handleDrop(e, "dropArea");
-        //   }
-        // });
+        dropContainer.current.removeEventListener("drop", (e) =>
+          handleDrop(e, "dropArea")
+        );
         dropContainer.current.removeEventListener("dragleave", handleDragLeave);
       }
     };
   }, [ownerLicense]);
 
-  function showAlert(icon: string, title: string, text: string) {
-    // Implement your alert logic here
-  }
-
-  function showImage(image: string) {
-    // Implement your image display logic here
-  }
-
   return (
     <>
-      <label className='mb-2 block text-sm font-medium'>{label}</label>
-
+      <label htmlFor={id} className='mb-2 block text-sm font-medium'>
+        {label}
+      </label>
       <div
         className={`${
           dragging
             ? "border border-[#2B92EC] bg-[#EDF2FF]"
             : "border-dashed border-[#e0e0e0]"
-        } flex items-center justify-center mx-auto text-center border-2 rounded-md mt-4 py-5`}
+        } flex items-center justify-center mx-auto text-center border-2 rounded-md mt-4 py-5 mb-5`}
         ref={dropContainer}
       >
         <div className='flex-1 flex flex-col'>
@@ -164,6 +159,7 @@ export function FileUploader({
           </div>
           <div className='text-[12px] font-normal text-gray-500'>
             <input
+              id={id}
               className='opacity-0 hidden'
               type='file'
               multiple
@@ -187,19 +183,16 @@ export function FileUploader({
         </div>
       </div>
 
-      {ownerLicense.length > 0 && (
-        <div className='mt-4 grid grid-cols-2 gap-y-4 gap-x-4 mb-4'>
+      {ownerLicense[0].name && (
+        <div className='mt-4 mb-4'>
           {ownerLicense.map((img, index) => (
             <div
-              className='w-full px-3 py-3.5 rounded-md bg-slate-200 space-y-3'
+              className='w-full px-3 py-3.5 rounded-md bg-slate-200 space-y-3 flex flex-col'
               key={index}
             >
               <div className='flex justify-between'>
                 <div className='w-[70%] flex justify-start items-center space-x-2'>
-                  <div
-                    className='text-[#5E62FF] text-[37px] cursor-pointer'
-                    onClick={() => showImage(img.photo)}
-                  >
+                  <div className='text-[#5E62FF] text-[37px] cursor-pointer'>
                     {img.type.match(/image.*/i) ? (
                       <FaRegFileImage />
                     ) : (
@@ -219,7 +212,7 @@ export function FileUploader({
                   <div className='space-y-1'>
                     <div
                       className='text-gray-500 text-[17px] cursor-pointer'
-                      onClick={() => onDelete(index)}
+                      onClick={() => onDelete(id)}
                     >
                       <BsX className='ml-auto' />
                     </div>
@@ -229,6 +222,13 @@ export function FileUploader({
                   </div>
                 </div>
               </div>
+              <Image
+                className='self-center'
+                src={img.photo}
+                alt={img.name}
+                width={200}
+                height={200}
+              />
             </div>
           ))}
         </div>

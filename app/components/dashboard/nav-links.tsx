@@ -4,6 +4,7 @@ import { LuHome } from "react-icons/lu";
 import Link from "next/link";
 import { BsDatabaseCheck } from "react-icons/bs";
 import { usePathname } from "next/navigation";
+import { BsCreditCard2Front } from "react-icons/bs";
 import clsx from "clsx";
 
 const links = [
@@ -13,7 +14,11 @@ const links = [
     href: "/dashboard/metadata",
     icon: BsDatabaseCheck,
   },
-  //   { name: "Customers", href: "/dashboard/customers", icon: UserGroupIcon },
+  {
+    name: "Voucher Management",
+    href: "/dashboard/voucher",
+    icon: BsCreditCard2Front,
+  },
 ];
 
 export default function NavLinks() {
