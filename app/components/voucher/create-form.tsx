@@ -150,7 +150,7 @@ export default function Form({ brands }: { brands: Brand[] }) {
 
       router.refresh();
       setIsLoading(false);
-      toast.success("Brand Metadata is added!");
+      toast.success("Voucher is added to the brand!");
       setFormData(voucherFormInitialState);
     } catch (error) {
       toast.error("Something went wrong");

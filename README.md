@@ -2,6 +2,7 @@
 
 - private routes redirect
 - brand categories should come from database
+- error handling form
 
 ## Data
 
@@ -24,22 +25,25 @@ voucher management:
 
 search:
 
-- brand name
+- brand name: input text
 
 filters:
 
-- brand category
-- brand status (active/inactive)
-- voucher expiration date
-- voucher discount percentage
+- brand category: multi select with search
+- brand status (active/inactive/verified): select
+- voucher min expiration date: date number
+- voucher min discount percentage: input number
+- Toggle columns: checkboxlist - !brandname
+- Rows per page: select
+
+pagination
 
 table representation:
 
-- Brand Logo
-- Brand Name
+- Brand Logo & Name
 - Brand Category
 - Brand Status
-- Voucher Highlight - titles
+- Voucher Highlight - Titles
 - Voucher Expiration Date
 - Voucher Discount Percentage
 
@@ -79,12 +83,11 @@ table representation:
 
 2. voucher management:
 
-<!-- - brand name: should be a select and the select should also contain the brand name which is added in the first section -->
-  <!-- - banner image: file input -->
-  <!-- - discount_percentage: number -->
-
+- brand name: should be a select and the select should also contain the brand name which is added in the first section
+- banner image: file input
+- discount_percentage: number
 - expiration_date: timestamp
 - FAQs: text input for question and textarea for answer with add FAQ button to dynamically add text input for question and textarea for answer
 - highlights
-  <!-- - description: textarea -->
+  - description: textarea
   - title and text: text input for title and textarea for text with add highlight button to dynamically add text input for title and textarea for text
