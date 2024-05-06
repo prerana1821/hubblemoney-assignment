@@ -1,6 +1,7 @@
 ## Todo
 
 - private routes redirect
+- brand categories should come from database
 
 ## Data
 
@@ -65,3 +66,25 @@ table representation:
    expiration_date: timestamp
    faq: json (array of objects - question and answer)
    highlights: json (array of objects - title and text)
+
+## form
+
+1. brand:
+
+- logo: file input
+- name: text input
+- description: textarea
+- category: select (groceries, fashion, beauty, travel)
+- status: radio button input of active/inactive/verified
+
+2. voucher management:
+
+<!-- - brand name: should be a select and the select should also contain the brand name which is added in the first section -->
+  <!-- - banner image: file input -->
+  <!-- - discount_percentage: number -->
+
+- expiration_date: timestamp
+- FAQs: text input for question and textarea for answer with add FAQ button to dynamically add text input for question and textarea for answer
+- highlights
+  <!-- - description: textarea -->
+  - title and text: text input for title and textarea for text with add highlight button to dynamically add text input for title and textarea for text
