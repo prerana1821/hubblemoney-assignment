@@ -1,3 +1,4 @@
+import { Highlight } from "./app";
 export interface UserDetails {
   id: string;
   full_name?: string;
@@ -43,4 +44,35 @@ export interface ImageFileData {
   type: string;
   size: number;
   file: File | null;
+}
+
+export interface BrandCategory {
+  query: string;
+  selected: string[];
+}
+
+export interface FilterFormData {
+  brandName: string;
+  brandStatus: string;
+  expirationDate: string;
+  discountPercentage: string;
+  brandCategory: BrandCategory;
+  selectedColumns: string[];
+  tableRows: string;
+}
+
+export interface ServerSideFilters
+  extends Omit<FilterFormData, "brandCategory"> {
+  brandCategory: string[];
+  currentPage: number;
+}
+
+export interface TableData {
+  brandName: string;
+  brandLogoPath: string;
+  brandStatus: string;
+  brandCategory: string;
+  highlights: string[];
+  expirationDate: string;
+  discountPercentage: string;
 }

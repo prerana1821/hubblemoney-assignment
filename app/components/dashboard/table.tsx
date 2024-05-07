@@ -1,13 +1,15 @@
+import getFilteredMetadata from "@/app/actions/getFilteredMetadata";
+import { FilterFormData, ServerSideFilters, TableData } from "@/types/app";
 import Image from "next/image";
 
 export default async function DataTable({
-  query,
-  currentPage,
+  filters,
 }: {
-  query: string;
-  currentPage: number;
+  filters: ServerSideFilters;
 }) {
-  //   const invoices = await fetchFilteredInvoices(query, currentPage);
+  const metadata = await getFilteredMetadata(filters);
+
+  console.log(metadata);
 
   return (
     <div className='mt-6 flow-root'>
@@ -77,43 +79,42 @@ export default async function DataTable({
               </tr>
             </thead>
             <tbody className='bg-white'>
-              {/* {invoices?.map((invoice) => (
+              {metadata?.map((data: TableData) => (
                 <tr
-                  key={invoice.id}
+                  key={data.id}
                   className='w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg'
                 >
                   <td className='whitespace-nowrap py-3 pl-6 pr-3'>
                     <div className='flex items-center gap-3'>
                       <Image
-                        src={invoice.image_url}
+                        src={data.image_url}
                         className='rounded-full'
                         width={28}
                         height={28}
-                        alt={`${invoice.name}'s profile picture`}
+                        alt={`${data.name}'s profile picture`}
                       />
-                      <p>{invoice.name}</p>
+                      <p>{data.name}</p>
                     </div>
                   </td>
+                  <td className='whitespace-nowrap px-3 py-3'>{data.email}</td>
                   <td className='whitespace-nowrap px-3 py-3'>
-                    {invoice.email}
+                    {/* {formatCurrency(data.amount)} */}
                   </td>
                   <td className='whitespace-nowrap px-3 py-3'>
-                    {formatCurrency(invoice.amount)}
+                    {/* {formatDateToLocal(data.date)} */}
                   </td>
                   <td className='whitespace-nowrap px-3 py-3'>
-                    {formatDateToLocal(invoice.date)}
-                  </td>
-                  <td className='whitespace-nowrap px-3 py-3'>
-                    <InvoiceStatus status={invoice.status} />
+                    {/* <dataStatus status={data.status} /> */}
                   </td>
                   <td className='whitespace-nowrap py-3 pl-6 pr-3'>
                     <div className='flex justify-end gap-3'>
-                      <UpdateInvoice id={invoice.id} />
-                      <DeleteInvoice id={invoice.id} />
+                      View Edit Update delete
+                      {/* <UpdateInvoice id={invoice.id} />
+                      <DeleteInvoice id={invoice.id} /> */}
                     </div>
                   </td>
                 </tr>
-              ))} */}
+              ))}
             </tbody>
           </table>
         </div>

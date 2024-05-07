@@ -4,8 +4,9 @@ import { IoRemoveCircleOutline, IoSearchOutline } from "react-icons/io5";
 interface MultiSelectorChipProps {
   query: string;
   selected: string[];
-  setQuery: React.Dispatch<React.SetStateAction<string>>;
-  setSelected: React.Dispatch<React.SetStateAction<string[]>>;
+  setQuery: (query: string) => void;
+  setSelected: (selected: string) => void;
+  removeTag: (tag: string) => void;
 }
 
 const MultiSelectorChip: React.FC<MultiSelectorChipProps> = ({
@@ -13,8 +14,9 @@ const MultiSelectorChip: React.FC<MultiSelectorChipProps> = ({
   setQuery,
   selected,
   setSelected,
+  removeTag,
 }) => {
-  const [menuOpen, setMenuOpen] = useState<boolean>(true);
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -45,10 +47,39 @@ const MultiSelectorChip: React.FC<MultiSelectorChipProps> = ({
     )?.length > 0;
 
   return (
-    <div className='bg-[#eef1f8] h-screen grid place-items-center'>
-      <div className='relative w-80 h-96 text-sm'>
+    <div className='grid place-items-center'>
+      <div className='relative  w-full  text-sm'>
+        <label
+          htmlFor={"brandCategory"}
+          className='mb-2 block text-sm font-medium'
+        >
+          Choose brand category:
+        </label>
+        <div className='relative rounded-md'>
+          <div className='relative'>
+            <input
+              ref={inputRef}
+              type='text'
+              id='brandCategory'
+              value={query}
+              onChange={(e) => setQuery(e.target.value.trimStart())}
+              placeholder='Search or Select Categories'
+              className='peer text-sm flex-1 caret-rose-600 block w-full  border rounded-md border-gray-300 py-2 pl-10  outline-2 placeholder:text-gray-500'
+              onFocus={() => setMenuOpen(true)}
+              onBlur={() => setMenuOpen(false)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !isDisable) {
+                  setSelected(query);
+                  setQuery("");
+                  setMenuOpen(true);
+                }
+              }}
+            />
+            <IoSearchOutline className='pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900' />
+          </div>
+        </div>
         {selected?.length ? (
-          <div className='bg-white w-80 relative text-xs flex flex-wrap gap-1 p-2 mb-2'>
+          <div className='bg-[#eef1f8] rounded-md relative text-xs flex flex-wrap gap-1 p-2 mt-2'>
             {selected.map((tag) => {
               return (
                 <div
@@ -58,9 +89,11 @@ const MultiSelectorChip: React.FC<MultiSelectorChipProps> = ({
                 >
                   {tag}
                   <div
+                    className='cursor-pointer'
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() =>
-                      setSelected(selected.filter((i) => i !== tag))
+                      // setSelected(selected.filter((i) => i !== tag))
+                      removeTag(tag)
                     }
                   >
                     <IoRemoveCircleOutline />
@@ -72,7 +105,7 @@ const MultiSelectorChip: React.FC<MultiSelectorChipProps> = ({
               <span
                 className='text-gray-400 cursor-pointer'
                 onClick={() => {
-                  setSelected([]);
+                  setSelected("clear-all");
                   inputRef.current?.focus();
                 }}
               >
@@ -81,55 +114,20 @@ const MultiSelectorChip: React.FC<MultiSelectorChipProps> = ({
             </div>
           </div>
         ) : null}
-        <div className='card flex items-center justify-between p-3 w-80 gap-2.5'>
-          <IoSearchOutline />
-          <input
-            ref={inputRef}
-            type='text'
-            value={query}
-            onChange={(e) => setQuery(e.target.value.trimStart())}
-            placeholder='Search or Create tags'
-            className='bg-transparent text-sm flex-1 caret-rose-600'
-            onFocus={() => setMenuOpen(true)}
-            onBlur={() => setMenuOpen(false)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !isDisable) {
-                setSelected((prev) => [...prev, query]);
-                setQuery("");
-                setMenuOpen(true);
-              }
-            }}
-          />
-          <button
-            className='text-sm disabled:text-gray-300 text-rose-500 disabled:cursor-not-allowed'
-            disabled={isDisable}
-            onClick={() => {
-              if (isDisable) {
-                return;
-              }
-              setSelected((prev) => [...prev, query]);
-              setQuery("");
-              inputRef.current?.focus();
-              setMenuOpen(true);
-            }}
-          >
-            + Add
-          </button>
-        </div>
 
         {/* Menu's */}
         {menuOpen ? (
-          <div className='card absolute w-full max-h-52 mt-2 p-1 flex overflow-y-auto scrollbar-thin scrollbar-track-slate-50 scrollbar-thumb-slate-200'>
+          <div className='origin-top-right absolute right-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10'>
             <ul className='w-full'>
               {filteredTags?.length ? (
                 filteredTags.map((tag, i) => (
                   <li
                     key={tag}
-                    className='p-2 cursor-pointer hover:bg-rose-50 hover:text-rose-500 rounded-md w-full'
+                    className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900'
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => {
                       setMenuOpen(true);
-                      setSelected((prev) => [...prev, tag]);
+                      setSelected(tag);
                       setQuery("");
                     }}
                   >
@@ -137,7 +135,9 @@ const MultiSelectorChip: React.FC<MultiSelectorChipProps> = ({
                   </li>
                 ))
               ) : (
-                <li className='p-2 text-gray-500'>No options available</li>
+                <li className='block px-4 py-2 text-sm text-gray-700'>
+                  No options available
+                </li>
               )}
             </ul>
           </div>
