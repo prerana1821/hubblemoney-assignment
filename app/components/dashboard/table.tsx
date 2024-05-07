@@ -1,6 +1,8 @@
 import getFilteredMetadata from "@/app/actions/getFilteredMetadata";
-import { FilterFormData, ServerSideFilters, TableData } from "@/types/app";
+import { transformMetadata } from "@/app/utils/table-data-handling";
+import { ServerSideFilters, TableData } from "@/types/app";
 import Image from "next/image";
+import { BrandLogo } from "./brand-logo";
 
 export default async function DataTable({
   filters,
@@ -9,7 +11,7 @@ export default async function DataTable({
 }) {
   const metadata = await getFilteredMetadata(filters);
 
-  console.log(metadata);
+  const formattedMetadata = transformMetadata(metadata);
 
   return (
     <div className='mt-6 flow-root'>
@@ -79,36 +81,43 @@ export default async function DataTable({
               </tr>
             </thead>
             <tbody className='bg-white'>
-              {metadata?.map((data: TableData) => (
+              {formattedMetadata?.map((data: TableData) => (
                 <tr
-                  key={data.id}
+                  key={data.brandName}
                   className='w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg'
                 >
                   <td className='whitespace-nowrap py-3 pl-6 pr-3'>
                     <div className='flex items-center gap-3'>
-                      <Image
-                        src={data.image_url}
-                        className='rounded-full'
-                        width={28}
-                        height={28}
-                        alt={`${data.name}'s profile picture`}
+                      <BrandLogo
+                        brandLogoPath={data.brandLogoPath}
+                        brandName={data.brandName}
                       />
-                      <p>{data.name}</p>
+                      <p>{data.brandName}</p>
                     </div>
                   </td>
-                  <td className='whitespace-nowrap px-3 py-3'>{data.email}</td>
                   <td className='whitespace-nowrap px-3 py-3'>
-                    {/* {formatCurrency(data.amount)} */}
+                    {data.brandCategory}
                   </td>
                   <td className='whitespace-nowrap px-3 py-3'>
+                    {/* {formatCurrency(data.brandStatus)} */}
+                    {data.brandStatus}
+                  </td>
+                  <td className='whitespace-nowrap px-3 py-3'>
+                    {data.highlights.join(", ")}
                     {/* {formatDateToLocal(data.date)} */}
                   </td>
                   <td className='whitespace-nowrap px-3 py-3'>
+                    {data.expirationDate}
                     {/* <dataStatus status={data.status} /> */}
+                  </td>
+                  <td className='whitespace-nowrap px-3 py-3'>
+                    {data.discountPercentage} %
+                    {/* <dataStatus status={dat/a.status} /> */}
                   </td>
                   <td className='whitespace-nowrap py-3 pl-6 pr-3'>
                     <div className='flex justify-end gap-3'>
-                      View Edit Update delete
+                      View
+                      {/* Edit Update delete */}
                       {/* <UpdateInvoice id={invoice.id} />
                       <DeleteInvoice id={invoice.id} /> */}
                     </div>

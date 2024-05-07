@@ -1,4 +1,3 @@
-import { Highlight } from "./app";
 export interface UserDetails {
   id: string;
   full_name?: string;
@@ -75,4 +74,14 @@ export interface TableData {
   highlights: string[];
   expirationDate: string;
   discountPercentage: string;
+}
+
+export interface MetadataItem {
+  brandName: string;
+  brandLogoPath: string;
+  brandStatus: string;
+  brandCategory: string;
+  highlights: string[];
+  expirationDate: string[];
+  discountPercentage: number[];
 }

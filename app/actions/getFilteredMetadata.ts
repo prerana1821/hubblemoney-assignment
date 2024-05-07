@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 
 const getFilteredMetadata = async (
   filters: ServerSideFilters
-): Promise<TableData[]> => {
+): Promise<any> => {
   const {
     currentPage,
     brandName,
@@ -16,20 +16,19 @@ const getFilteredMetadata = async (
     tableRows,
   } = filters;
 
-  console.log({ filters });
-
   const supabase = createServerComponentClient({ cookies: cookies });
   const limit = tableRows ? parseInt(tableRows) : 10;
   const offset = (currentPage - 1) * limit;
 
   try {
+    // Fetch brands
     let brandQuery = supabase
       .from("brands")
-      .select("name, category, status, logo_path");
-    let voucherQuery = supabase
-      .from("vouchers")
-      .select("highlights, expiration_date, discount_percentage");
+      .select("id, name, category, status, logo_path")
+      .range(offset, offset + limit - 1)
+      .limit(limit);
 
+    // Apply filters based on provided parameters
     if (brandName) {
       brandQuery = brandQuery.eq("name", brandName);
     }
@@ -42,25 +41,27 @@ const getFilteredMetadata = async (
       brandQuery = brandQuery.eq("status", brandStatus);
     }
 
-    if (expirationDate) {
-      voucherQuery = voucherQuery.lte("expiration_date", expirationDate);
-    }
-
-    if (discountPercentage) {
-      voucherQuery = voucherQuery.lte(
-        "discount_percentage",
-        discountPercentage
-      );
-    }
-
-    brandQuery = brandQuery.limit(limit).range(offset, offset + limit - 1);
-    voucherQuery = voucherQuery.limit(limit).range(offset, offset + limit - 1);
-
     const { data: brands, error: brandError } = await brandQuery;
 
     if (brandError) {
       console.error("Supabase Brand Error:", brandError.message);
       throw new Error("Failed to fetch brands.");
+    }
+
+    // Fetch vouchers associated with brands
+    const voucherIds = brands.map((brand: any) => brand.id);
+
+    const voucherQuery = supabase
+      .from("vouchers")
+      .select("brand_id, highlights, expiration_date, discount_percentage")
+      .in("brand_id", voucherIds);
+
+    if (expirationDate) {
+      voucherQuery.lte("expiration_date", expirationDate);
+    }
+
+    if (discountPercentage) {
+      voucherQuery.lte("discount_percentage", discountPercentage);
     }
 
     const { data: vouchers, error: voucherError } = await voucherQuery;
@@ -70,24 +71,30 @@ const getFilteredMetadata = async (
       throw new Error("Failed to fetch vouchers.");
     }
 
-    const tableData: TableData[] = [];
+    const tableData = brands.map((brand: any) => {
+      const associatedVouchers = vouchers.filter(
+        (voucher: any) => voucher.brand_id === brand.id
+      );
+      return {
+        brandName: brand.name,
+        brandLogoPath: brand.logo_path,
+        brandStatus: brand.status,
+        brandCategory: brand.category,
+        highlights: associatedVouchers.map(
+          (voucher: any) => voucher.highlights
+        ),
+        expirationDate: associatedVouchers.map(
+          (voucher: any) => voucher.expiration_date
+        ),
+        discountPercentage: associatedVouchers.map(
+          (voucher: any) => voucher.discount_percentage
+        ),
+      };
+    });
 
-    // brands.forEach((obj, i, arr) => {
-    //   const objFromArr2 = vouchers.find(({ id }) => id === obj.id) || {};
+    console.log(tableData);
 
-    //  tableData.push({
-    //    brandName: obj.name,
-    //    brandStatus: obj.status,
-    //    brandCategory: obj.category,
-    //    brandLogoPath: obj.logo_path
-    //    highlights: [],
-    //    expirationDate: "",
-    //    discountPercentage: "",
-    //  });
-    // });
-
-    // return { brands, vouchers } ?? {};
-    return tableData ?? [];
+    return tableData;
   } catch (error) {
     console.error("Supabase Error:", error);
     throw new Error("Failed to fetch data.");
