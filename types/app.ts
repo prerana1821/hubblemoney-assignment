@@ -67,6 +67,7 @@ export interface ServerSideFilters
 }
 
 export interface TableData {
+  brandId: string;
   brandName: string;
   brandLogoPath: string;
   brandStatus: string;
@@ -77,6 +78,7 @@ export interface TableData {
 }
 
 export interface MetadataItem {
+  brandId: string;
   brandName: string;
   brandLogoPath: string;
   brandStatus: string;

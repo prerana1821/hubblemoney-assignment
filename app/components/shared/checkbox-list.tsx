@@ -1,3 +1,4 @@
+import useOutsideClick from "@/hooks/useOutsideClick";
 import React, { useState, useRef, useEffect } from "react";
 import { VscSettings } from "react-icons/vsc";
 
@@ -28,6 +29,8 @@ const CheckboxList: React.FC<CheckboxListProps> = ({
       setDropdownWidth(viewRect.width);
     }
   }, [menuOpen]);
+
+  useOutsideClick(dropdownRef, () => setMenuOpen(false));
 
   return (
     <div className='mb-4'>

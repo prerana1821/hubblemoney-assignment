@@ -2,9 +2,7 @@ import { ServerSideFilters, TableData } from "@/types/app";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 
-const getFilteredMetadata = async (
-  filters: ServerSideFilters
-): Promise<any> => {
+const getFilteredMetadata = async (filters: ServerSideFilters) => {
   const {
     currentPage,
     brandName,
@@ -12,7 +10,6 @@ const getFilteredMetadata = async (
     brandStatus,
     expirationDate,
     discountPercentage,
-    selectedColumns,
     tableRows,
   } = filters;
 
@@ -36,13 +33,9 @@ const getFilteredMetadata = async (
       brandQuery = brandQuery.in("category", brandCategory);
     }
 
-    console.log({ brandStatus });
-
     if (brandStatus) {
       brandQuery = brandQuery.eq("status", brandStatus);
     }
-
-    console.log({ brandQuery });
 
     const { data: brands, error: brandError } = await brandQuery;
 
@@ -56,7 +49,7 @@ const getFilteredMetadata = async (
 
     const voucherQuery = supabase
       .from("vouchers")
-      .select("brand_id, highlights, expiration_date, discount_percentage")
+      .select("id, brand_id, highlights, expiration_date, discount_percentage")
       .in("brand_id", voucherIds);
 
     if (expirationDate) {
@@ -78,7 +71,9 @@ const getFilteredMetadata = async (
       const associatedVouchers = vouchers.filter(
         (voucher: any) => voucher.brand_id === brand.id
       );
+
       return {
+        brandId: brand.id,
         brandName: brand.name,
         brandLogoPath: brand.logo_path,
         brandStatus: brand.status,

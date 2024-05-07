@@ -23,8 +23,8 @@ const TableFilters = () => {
     brandStatus: "",
     expirationDate: "",
     discountPercentage: "",
-    selectedColumns: [],
-    tableRows: "",
+    selectedColumns: TABLE_COLUMNS.map((column) => column.value),
+    tableRows: "10",
   });
 
   const debouncedValue = useDebounce({

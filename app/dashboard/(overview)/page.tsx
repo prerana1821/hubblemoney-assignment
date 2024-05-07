@@ -15,8 +15,6 @@ export default async function Page({
     tableRows?: string;
   };
 }) {
-  console.log({ searchParams });
-
   const currentPage = Number(searchParams?.page) || 1;
   const brandName = searchParams?.brandName || "";
   const brandCategory = searchParams?.brandCategory || [];
@@ -26,13 +24,10 @@ export default async function Page({
   const selectedColumns = searchParams?.selectedColumns || [];
   const tableRows = searchParams?.tableRows || "";
 
-  console.log(1, { brandStatus });
-
   return (
     <main>
       <h1 className={"mb-4 text-xl md:text-2xl"}>Dashboard</h1>
       <div className='mt-4 flex flex-col gap-2 md:mt-8'>
-        {/* filters */}
         <TableFilters />
       </div>
       <DataTable
@@ -47,9 +42,6 @@ export default async function Page({
           tableRows,
         }}
       />
-      {/* <div className='mt-5 flex w-full justify-center'>
-        <Pagination totalPages={totalPages} />
-      </div> */}
     </main>
   );
 }
