@@ -3,6 +3,8 @@ import { transformMetadata } from "@/app/utils/table-data-handling";
 import { ServerSideFilters, TableData } from "@/types/app";
 import Image from "next/image";
 import { BrandLogo } from "./brand-logo";
+import { formatDateToLocal } from "@/app/utils/string-manipulation";
+import { FaEllipsis } from "react-icons/fa6";
 
 export default async function DataTable({
   filters,
@@ -73,7 +75,7 @@ export default async function DataTable({
                   Voucher Expiry Date
                 </th>
                 <th scope='col' className='px-3 py-5 font-medium'>
-                  Voucher Discount %
+                  Voucher Discount
                 </th>
                 <th scope='col' className='relative py-3 pl-6 pr-3'>
                   <span className='sr-only'>Edit</span>
@@ -102,12 +104,12 @@ export default async function DataTable({
                     {/* {formatCurrency(data.brandStatus)} */}
                     {data.brandStatus}
                   </td>
-                  <td className='whitespace-nowrap px-3 py-3'>
+                  <td className='px-3 py-3 truncate max-w-40'>
+                    {/* TODO: add onhover */}
                     {data.highlights.join(", ")}
-                    {/* {formatDateToLocal(data.date)} */}
                   </td>
                   <td className='whitespace-nowrap px-3 py-3'>
-                    {data.expirationDate}
+                    {formatDateToLocal(data.expirationDate)}
                     {/* <dataStatus status={data.status} /> */}
                   </td>
                   <td className='whitespace-nowrap px-3 py-3'>
@@ -115,9 +117,10 @@ export default async function DataTable({
                     {/* <dataStatus status={dat/a.status} /> */}
                   </td>
                   <td className='whitespace-nowrap py-3 pl-6 pr-3'>
-                    <div className='flex justify-end gap-3'>
-                      View
-                      {/* Edit Update delete */}
+                    <div className='flex align-middle justify-center gap-3 border border-gray-200 rounded-md p-1 py-2 cursor-pointer'>
+                      <FaEllipsis className='h-[18px] w-[18px]' />
+
+                      {/* View Edit Update delete */}
                       {/* <UpdateInvoice id={invoice.id} />
                       <DeleteInvoice id={invoice.id} /> */}
                     </div>

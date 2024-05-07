@@ -14,6 +14,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
 import uniqid from "uniqid";
 import toast from "react-hot-toast";
+import { BRAND_STATUS, CATEGORIES } from "@/app/utils/constants";
 
 const brandFormInitialState: BrandData = {
   logo: { name: "", photo: "", type: "", size: 0, file: null },
@@ -175,21 +176,21 @@ export default function Form() {
             <option value='' disabled>
               Select a category
             </option>
-            <option value='groceries'>Groceries</option>
-            <option value='fashion'>Fashion</option>
-            <option value='beauty'>Beauty</option>
-            <option value='travel'>Travel</option>
+            {CATEGORIES.map((category) => (
+              <option value={category} key={category}>
+                {category}
+              </option>
+            ))}
           </LabeledSelect>
 
           <LabeledRadio
             id='status'
             name='status'
             label='Set the brand status'
-            options={[
-              { label: "Active", value: "Active" },
-              { label: "Inactive", value: "Inactive" },
-              { label: "Verified", value: "verified" },
-            ]}
+            options={BRAND_STATUS.map((status) => ({
+              label: status,
+              value: status,
+            }))}
             value={formData.status}
             disabled={isLoading}
             onChange={handleBrandChange}

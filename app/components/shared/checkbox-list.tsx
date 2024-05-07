@@ -41,7 +41,7 @@ const CheckboxList: React.FC<CheckboxListProps> = ({
         <div className='relative'>
           <div
             ref={viewRef}
-            className='border py-1 text-center rounded-md border-gray-300'
+            className='border py-1 text-center rounded-md border-gray-300 min-w-32'
             onClick={() => setMenuOpen(!menuOpen)}
           >
             View

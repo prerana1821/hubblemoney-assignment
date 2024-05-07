@@ -5,19 +5,13 @@ import CheckboxList from "../shared/checkbox-list";
 import LabeledInput from "../shared/labeled-input";
 import LabeledSelect from "../shared/labeled-select";
 import MultiSelectorChip from "../shared/multi-selector";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import queryString from "query-string";
 import { FilterFormData } from "@/types/app";
-
-const columns = [
-  { label: "Vue JS", value: "vue" },
-  { label: "React", value: "react" },
-  { label: "Angular", value: "angular" },
-  { label: "Laravel", value: "laravel" },
-];
+import useDebounce from "@/hooks/useDebounce";
+import { BRAND_STATUS, TABLE_COLUMNS } from "@/app/utils/constants";
 
 const TableFilters = () => {
-  const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
   const [formData, setFormData] = useState<FilterFormData>({
@@ -33,43 +27,16 @@ const TableFilters = () => {
     tableRows: "",
   });
 
-  useEffect(() => {
-    // const params = new URLSearchParams(searchParams);
-    // params.set("page", "1");
-    // Object.entries(formData).forEach(([key, value]) => {
-    //   if (value && typeof value === "object" && !Array.isArray(value)) {
-    //     const brandCategory = value as BrandCategory;
-    //     if (
-    //       "query" in brandCategory &&
-    //       "selected" in brandCategory &&
-    //       brandCategory.selected.length > 0
-    //     ) {
-    //       brandCategory.selected.forEach((selectedValue) => {
-    //         params.append("brandCategory", selectedValue);
-    //       });
-    //     } else {
-    //       console.error(
-    //         `Invalid brandCategory object: ${JSON.stringify(brandCategory)}`
-    //       );
-    //     }
-    //   } else if (Array.isArray(value) && value.length > 0) {
-    //     if (key === "selectedColumns") {
-    //       value.forEach((selectedValue) => {
-    //         params.append(key, selectedValue);
-    //       });
-    //     } else {
-    //       console.error(`Invalid selectedColumns`);
-    //     }
-    //   } else if (value) {
-    //     params.set(key, value);
-    //   } else {
-    //     params.delete(key);
-    //   }
-    // });
+  const debouncedValue = useDebounce({
+    value: formData.brandName,
+    delay: 300,
+  });
 
+  useEffect(() => {
     const queryParams = queryString.stringify(
       {
         ...formData,
+        brandName: formData.brandName.length === 0 ? "" : debouncedValue,
         brandCategory: formData.brandCategory.selected,
         page: 1,
       },
@@ -77,7 +44,8 @@ const TableFilters = () => {
         skipEmptyString: true,
       }
     );
-    // console.log(queryParams);
+
+    console.log(queryParams);
 
     replace(`${pathname}${queryParams ? "?" + queryParams : ""}`);
   }, [formData]);
@@ -94,7 +62,7 @@ const TableFilters = () => {
 
   const handleCheckboxChange = (index: number) => {
     const updatedSelectedColumns = [...formData.selectedColumns];
-    const newValue = columns[index].value;
+    const newValue = TABLE_COLUMNS[index].value;
     const selectedIndex = updatedSelectedColumns.indexOf(newValue);
 
     if (selectedIndex === -1) {
@@ -179,20 +147,23 @@ const TableFilters = () => {
           id='status'
           label='Choose brand status:'
           name='status'
+          className='mt-1 block w-full rounded-md border-gray-300'
           value={formData.brandStatus}
           onChange={handleInputChange}
         >
           <option value='' disabled>
             Select a status
           </option>
-          <option value='active'>Active</option>
-          <option value='inactive'>Inactive</option>
-          <option value='verified'>Verified</option>
+          {BRAND_STATUS.map((status) => (
+            <option value={status} key={status}>
+              {status}
+            </option>
+          ))}
         </LabeledSelect>
         <LabeledInput
           id='expirationDate'
           type='datetime-local'
-          label={"Minimum Voucher Expiry Date:"}
+          label={"Minimum Voucher Expiry:"}
           name='expirationDate'
           value={formData.expirationDate}
           onChange={handleInputChange}
@@ -209,7 +180,7 @@ const TableFilters = () => {
           className='mt-1 block w-full rounded-md border-gray-300'
         />
         <CheckboxList
-          items={columns}
+          items={TABLE_COLUMNS}
           checkedItems={formData.selectedColumns}
           onCheckboxChange={handleCheckboxChange}
         />

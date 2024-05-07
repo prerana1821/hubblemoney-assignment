@@ -8,7 +8,7 @@ export default async function Page({
     page?: string;
     brandName?: string;
     brandCategory?: string[];
-    brandStatus?: string;
+    status?: string;
     expirationDate?: string;
     discountPercentage?: string;
     selectedColumns?: string[];
@@ -20,11 +20,13 @@ export default async function Page({
   const currentPage = Number(searchParams?.page) || 1;
   const brandName = searchParams?.brandName || "";
   const brandCategory = searchParams?.brandCategory || [];
-  const brandStatus = searchParams?.brandStatus || "";
+  const brandStatus = searchParams?.status || "";
   const expirationDate = searchParams?.expirationDate || "";
   const discountPercentage = searchParams?.discountPercentage || "";
   const selectedColumns = searchParams?.selectedColumns || [];
   const tableRows = searchParams?.tableRows || "";
+
+  console.log(1, { brandStatus });
 
   return (
     <main>

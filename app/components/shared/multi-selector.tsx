@@ -1,3 +1,4 @@
+import { CATEGORIES } from "@/app/utils/constants";
 import { useRef, useState } from "react";
 import { IoRemoveCircleOutline, IoSearchOutline } from "react-icons/io5";
 
@@ -20,20 +21,7 @@ const MultiSelectorChip: React.FC<MultiSelectorChipProps> = ({
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const tags: string[] = [
-    "Tutorial",
-    "HowTo",
-    "DIY",
-    "Review",
-    "Tech",
-    "Gaming",
-    "Travel",
-    "Fitness",
-    "Cooking",
-    "Vlog",
-  ];
-
-  const filteredTags = tags.filter(
+  const filteredTags = CATEGORIES.filter(
     (item) =>
       item?.toLocaleLowerCase()?.includes(query.toLocaleLowerCase()?.trim()) &&
       !selected.includes(item)
@@ -126,7 +114,7 @@ const MultiSelectorChip: React.FC<MultiSelectorChipProps> = ({
                     className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900'
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => {
-                      setMenuOpen(true);
+                      setMenuOpen(false);
                       setSelected(tag);
                       setQuery("");
                     }}

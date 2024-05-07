@@ -34,12 +34,8 @@ export function FileUploader({
   ) {
     let files: FileList | [] = [];
 
-    console.log(e.target);
-
     if (type === "inputFile") {
       const inputElement = e.target as HTMLInputElement;
-      console.log(1, inputElement.files);
-      console.log(files);
       files = inputElement.files ? inputElement.files : [];
     } else {
       const dragEvent = e as DragEvent;
@@ -77,8 +73,6 @@ export function FileUploader({
       );
       return;
     }
-
-    console.log({ files });
 
     if (files && files.length) {
       // TODO: write try catch

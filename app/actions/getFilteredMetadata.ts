@@ -28,18 +28,21 @@ const getFilteredMetadata = async (
       .range(offset, offset + limit - 1)
       .limit(limit);
 
-    // Apply filters based on provided parameters
     if (brandName) {
-      brandQuery = brandQuery.eq("name", brandName);
+      brandQuery = brandQuery.ilike("name", `%${brandName}%`);
     }
 
     if (brandCategory && brandCategory.length > 0) {
       brandQuery = brandQuery.in("category", brandCategory);
     }
 
+    console.log({ brandStatus });
+
     if (brandStatus) {
       brandQuery = brandQuery.eq("status", brandStatus);
     }
+
+    console.log({ brandQuery });
 
     const { data: brands, error: brandError } = await brandQuery;
 
@@ -91,8 +94,6 @@ const getFilteredMetadata = async (
         ),
       };
     });
-
-    console.log(tableData);
 
     return tableData;
   } catch (error) {
