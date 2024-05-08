@@ -94,3 +94,25 @@ export type BrandDataFromDB = Omit<BrandData, "logo"> & {
   logo_path: string;
   id: string;
 };
+
+export interface BrandFormState {
+  logo: ImageFileData & {
+    error: string | null;
+  };
+  name: {
+    value: string;
+    error: string | null;
+  };
+  description: {
+    value: string;
+    error: string | null;
+  };
+  category: {
+    value: (typeof CATEGORIES)[number];
+    error: string | null;
+  };
+  status: {
+    value: (typeof BRAND_STATUS)[number];
+    error: string | null;
+  };
+}

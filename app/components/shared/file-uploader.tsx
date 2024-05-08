@@ -28,6 +28,8 @@ export function FileUploader({
   const [dragging, setDragging] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  console.log(ownerLicense[0].path);
+
   function handleDrop(
     e: DragEvent | React.ChangeEvent<HTMLInputElement>,
     type: "inputFile" | "dropArea"
@@ -239,7 +241,7 @@ export function FileUploader({
             </div>
             <Image
               className='self-center'
-              src={ownerLicense[0].path}
+              src={`${ownerLicense[0].path}`}
               alt={"brand logo"}
               width={200}
               height={200}

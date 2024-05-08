@@ -1,14 +1,18 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { BrandData, BrandDataFromDB } from "@/types/app";
+import { BrandDataFromDB, BrandFormState } from "@/types/app";
 import LabeledInput from "../shared/labeled-input";
 import LabeledTextarea from "../shared/labeled-textarea";
 import LabeledSelect from "../shared/labeled-select";
 import LabeledRadio from "../shared/labeled-radio";
 import { FileUploader } from "../shared/file-uploader";
 import { Button } from "../shared/button";
-import { deleteFile, uploadFiles } from "@/app/utils/file-handling";
+import {
+  deleteFile,
+  handleFormValidations,
+  uploadFiles,
+} from "@/app/utils/file-handling";
 import { BRAND_STATUS, CATEGORIES } from "@/app/utils/constants";
 import Link from "next/link";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -16,12 +20,12 @@ import { redirect, useRouter } from "next/navigation";
 import uniqid from "uniqid";
 import toast from "react-hot-toast";
 
-const brandFormInitialState: BrandData = {
-  logo: { name: "", photo: "", type: "", size: 0, file: null },
-  name: "",
-  description: "",
-  category: "One stop shop",
-  status: "Active",
+const defaultAddBrandFormState: BrandFormState = {
+  logo: { name: "", photo: "", type: "", size: 0, file: null, error: null },
+  name: { value: "", error: null },
+  description: { value: "", error: null },
+  category: { value: "One stop shop", error: null },
+  status: { value: "Active", error: null },
 };
 
 export default function Form({
@@ -31,10 +35,10 @@ export default function Form({
   brand?: BrandDataFromDB;
   logoUrl?: string;
 }) {
-  let brandEditFormInitialState: BrandData = {} as BrandData;
+  let deafultEditBrandFormState: BrandFormState = {} as BrandFormState;
 
   if (brand) {
-    brandEditFormInitialState = {
+    deafultEditBrandFormState = {
       logo: {
         name: "",
         photo: "",
@@ -42,17 +46,18 @@ export default function Form({
         size: 0,
         file: null,
         path: logoUrl,
+        error: null,
       },
-      name: brand?.name,
-      description: brand?.description,
-      category: brand?.category,
-      status: brand?.status,
+      name: { value: brand?.name, error: null },
+      description: { value: brand?.description, error: null },
+      category: { value: brand?.category, error: null },
+      status: { value: brand?.status, error: null },
     };
   }
 
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState<BrandData>(
-    brand ? brandEditFormInitialState : brandFormInitialState
+  const [formData, setFormData] = useState<BrandFormState>(
+    brand ? deafultEditBrandFormState : defaultAddBrandFormState
   );
   const supabaseClient = useSupabaseClient();
   const router = useRouter();
@@ -65,7 +70,7 @@ export default function Form({
     const { name, value } = event.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: { value },
     });
   };
 
@@ -75,27 +80,48 @@ export default function Form({
     try {
       setIsLoading(true);
 
-      if (!formData.logo?.file) {
+      console.log(formData.logo);
+      console.log(formData.logo.path);
+
+      if (!formData.logo?.file && formData.logo.path === "") {
         setIsLoading(false);
         return toast.error("Missing logo file");
       }
 
-      const uniqueID = uniqid();
+      const hasErrors = handleFormValidations(formData, setFormData);
 
+      console.log(hasErrors);
+
+      if (hasErrors) {
+        setIsLoading(false);
+        return;
+      }
+
+      const uniqueID = uniqid();
+      let logoData;
       // TODO: delete image from storage if edit form
 
-      const { data: logoData, error: logoError } = await supabaseClient.storage
-        .from("logos")
-        .upload(`logo-${formData.logo.name}-${uniqueID}`, formData.logo.file, {
-          cacheControl: "3600",
-          upsert: false,
-        });
+      if (!formData.logo.path || formData.logo.path.length === 0) {
+        const { data: _logoData, error: logoError } =
+          await supabaseClient.storage
+            .from("logos")
+            .upload(
+              `logo-${formData.logo.name}-${uniqueID}`,
+              formData.logo.file as File,
+              {
+                cacheControl: "3600",
+                upsert: false,
+              }
+            );
 
-      if (logoError) {
-        console.error({ logoError });
+        if (logoError) {
+          console.error({ logoError });
 
-        setIsLoading(false);
-        return toast.error("Failed logo upload.");
+          setIsLoading(false);
+          return toast.error("Failed logo upload.");
+        }
+
+        logoData = _logoData;
       }
 
       if (brand) {
@@ -103,11 +129,11 @@ export default function Form({
           .from("brands")
           .upsert({
             id: brand?.id,
-            name: formData.name,
-            description: formData.description,
-            category: formData.category,
-            logo_path: logoData.path,
-            status: formData.status,
+            name: formData.name.value,
+            description: formData.description.value,
+            category: formData.category.value,
+            status: formData.status.value,
+            ...(formData.logo.path ? {} : { logo_path: logoData?.path }),
           });
 
         if (supabaseEditError) {
@@ -117,17 +143,17 @@ export default function Form({
           );
         } else {
           toast.success("Brand Metadata is updated successfully.");
-          redirect("/dashboard");
+          router.push("/dashboard");
         }
       } else {
         const { error: supabaseInsertError } = await supabaseClient
           .from("brands")
           .insert({
-            name: formData.name,
-            description: formData.description,
-            category: formData.category,
-            logo_path: logoData.path,
-            status: formData.status,
+            name: formData.name.value,
+            description: formData.description.value,
+            category: formData.category.value,
+            logo_path: logoData?.path,
+            status: formData.status.value,
           });
 
         if (supabaseInsertError) {
@@ -142,8 +168,9 @@ export default function Form({
 
       router.refresh();
       setIsLoading(false);
-      setFormData(brandFormInitialState);
+      setFormData(defaultAddBrandFormState);
     } catch (error) {
+      console.log(error);
       toast.error("Something went wrong");
     } finally {
       setIsLoading(false);
@@ -165,11 +192,11 @@ export default function Form({
                 "brandLogo",
                 formData
               );
-              setFormData(updatedFormData as BrandData);
+              setFormData(updatedFormData as BrandFormState);
             }}
             onDelete={() => {
               const updatedFormData = deleteFile("brandLogo", formData);
-              setFormData(updatedFormData as BrandData);
+              setFormData(updatedFormData as BrandFormState);
             }}
             count={1}
             formats={["jpg", "jpeg", "png"]}
@@ -180,10 +207,11 @@ export default function Form({
             type='text'
             label={"Brand Name"}
             name='name'
-            value={formData.name}
+            value={formData.name.value}
             className='mt-1 block w-full rounded-md border-gray-300'
             onChange={(e) => handleBrandChange(e)}
             required={true}
+            error={formData.name.error}
             placeholder='Brand Name'
           />
           <LabeledTextarea
@@ -194,18 +222,18 @@ export default function Form({
             label='Brand Description'
             name='description'
             required={true}
-            value={formData.description}
             onChange={handleBrandChange}
-            // error={state.errors?.message} // Pass the error message from your form state
+            value={formData.description.value}
+            error={formData.description.error}
           />
           <LabeledSelect
             id='category'
             label='Choose category'
             name='category'
-            value={formData.category}
+            value={formData.category.value}
             onChange={handleBrandChange}
             disabled={isLoading}
-            // error={state.errors?.customerId}
+            error={formData.category.error}
           >
             <option value='' disabled>
               Select a category
@@ -225,10 +253,10 @@ export default function Form({
               label: status,
               value: status,
             }))}
-            value={formData.status}
+            value={formData.status.value}
             disabled={isLoading}
             onChange={handleBrandChange}
-            // error={state.errors?.status}
+            error={formData.status.error}
           />
         </div>
       </div>
@@ -239,7 +267,7 @@ export default function Form({
         >
           Cancel
         </Link>
-        <Button type='submit'>Add Brand Metadata</Button>
+        <Button type='submit'>{brand ? "Update" : "Add"} Brand Metadata</Button>
       </div>
     </form>
   );
