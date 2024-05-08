@@ -1,5 +1,6 @@
 import DataTable from "@/app/components/dashboard/table";
 import TableFilters from "@/app/components/dashboard/table-filters";
+import { Suspense } from "react";
 
 export default async function Page({
   searchParams,
@@ -30,18 +31,20 @@ export default async function Page({
       <div className='mt-4 flex flex-col gap-2 md:mt-8'>
         <TableFilters />
       </div>
-      <DataTable
-        filters={{
-          currentPage,
-          brandName,
-          brandCategory,
-          brandStatus,
-          expirationDate,
-          discountPercentage,
-          selectedColumns,
-          tableRows,
-        }}
-      />
+      <Suspense fallback={"loading..."}>
+        <DataTable
+          filters={{
+            currentPage,
+            brandName,
+            brandCategory,
+            brandStatus,
+            expirationDate,
+            discountPercentage,
+            selectedColumns,
+            tableRows,
+          }}
+        />
+      </Suspense>
     </main>
   );
 }

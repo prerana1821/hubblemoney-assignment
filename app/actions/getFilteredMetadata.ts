@@ -1,4 +1,9 @@
-import { ServerSideFilters, TableData } from "@/types/app";
+import {
+  BrandDataFromDB,
+  Highlight,
+  ServerSideFilters,
+  TableData,
+} from "@/types/app";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 
@@ -67,28 +72,125 @@ const getFilteredMetadata = async (filters: ServerSideFilters) => {
       throw new Error("Failed to fetch vouchers.");
     }
 
-    const tableData = brands.map((brand: any) => {
-      const associatedVouchers = vouchers.filter(
-        (voucher: any) => voucher.brand_id === brand.id
-      );
+    // const associatedVouchers = vouchers.filter(
+    //   (voucher: any) => vouher.brand_id === brand.id
+    // );
 
-      return {
-        brandId: brand.id,
-        brandName: brand.name,
-        brandLogoPath: brand.logo_path,
-        brandStatus: brand.status,
-        brandCategory: brand.category,
-        highlights: associatedVouchers.map(
-          (voucher: any) => voucher.highlights
-        ),
-        expirationDate: associatedVouchers.map(
-          (voucher: any) => voucher.expiration_date
-        ),
-        discountPercentage: associatedVouchers.map(
-          (voucher: any) => voucher.discount_percentage
-        ),
-      };
-    });
+    // const tableData = brands.map(
+    //   (brand: Omit<BrandDataFromDB, "description">) => {
+    //     const foundVoucher = vouchers.find(
+    //       (voucher) => voucher.brand_id === brand.id
+    //     );
+
+    //     console.log({ foundVoucher });
+
+    //     if (!foundVoucher) {
+    //       const emptyVoucherBrand: TableData = {
+    //         brandId: brand.id,
+    //         brandName: brand.name,
+    //         brandLogoPath: brand.logo_path,
+    //         brandStatus: brand.status,
+    //         brandCategory: brand.category,
+    //         highlights: [],
+    //         expirationDate: "",
+    //         discountPercentage: "",
+    //       };
+    //       return emptyVoucherBrand;
+    //     } else {
+    //       const transformedItem: TableData = {
+    //         brandId: brand.id,
+    //         brandName: brand.name,
+    //         brandLogoPath: brand.logo_path,
+    //         brandStatus: brand.status,
+    //         brandCategory: brand.category,
+    //         highlights: [],
+    //         expirationDate: "",
+    //         discountPercentage: "",
+    //       };
+
+    //       let parsedHighlight: string[] = [];
+    //       if (foundVoucher?.highlights) {
+    //         const parsedHighlights = JSON.parse(foundVoucher?.highlights) as {
+    //           list: Highlight[];
+    //         };
+
+    //         parsedHighlight = parsedHighlights.list.map(
+    //           (listItem) => listItem.title
+    //         );
+    //       }
+
+    //       return {
+    //         ...transformedItem,
+    //         highlights: parsedHighlight,
+    //         voucherId: foundVoucher?.id || "",
+    //         expirationDate: foundVoucher?.expiration_date,
+    //         discountPercentage: foundVoucher?.discount_percentage,
+    //       };
+    //     }
+    //     // return {
+    //     //   brandId: brand.id,
+    //     //   brandName: brand.name,
+    //     //   brandLogoPath: brand.logo_path,
+    //     //   brandStatus: brand.status,
+    //     //   brandCategory: brand.category,
+    //     //   highlights: associatedVouchers.map(
+    //     //     (voucher: any) => voucher.highlights
+    //     //   ),
+    //     //   expirationDate: associatedVouchers.map(
+    //     //     (voucher: any) => voucher.expiration_date
+    //     //   ),
+    //     //   discountPercentage: associatedVouchers.map(
+    //     //     (voucher: any) => voucher.discount_percentage
+    //     //   ),
+    //     // };
+    //   }
+    // );
+
+    const tableData = brands.flatMap(
+      (brand: Omit<BrandDataFromDB, "description">) => {
+        const foundVouchers = vouchers.filter(
+          (voucher) => voucher.brand_id === brand.id
+        );
+
+        if (foundVouchers.length === 0) {
+          const emptyVoucherBrand: TableData = {
+            brandId: brand.id,
+            brandName: brand.name,
+            brandLogoPath: brand.logo_path,
+            brandStatus: brand.status,
+            brandCategory: brand.category,
+            highlights: [],
+            expirationDate: "",
+            discountPercentage: "",
+          };
+          return [emptyVoucherBrand];
+        } else {
+          return foundVouchers.map((foundVoucher) => {
+            let parsedHighlight: string[] = [];
+            if (foundVoucher.highlights) {
+              const parsedHighlights = JSON.parse(foundVoucher.highlights) as {
+                list: Highlight[];
+              };
+              parsedHighlight = parsedHighlights.list.map(
+                (listItem) => listItem.title
+              );
+            }
+
+            return {
+              brandId: brand.id,
+              brandName: brand.name,
+              brandLogoPath: brand.logo_path,
+              brandStatus: brand.status,
+              brandCategory: brand.category,
+              voucherId: foundVoucher.id,
+              highlights: parsedHighlight,
+              expirationDate: foundVoucher.expiration_date || "",
+              discountPercentage: foundVoucher.discount_percentage || "",
+            };
+          });
+        }
+      }
+    );
 
     return tableData;
   } catch (error) {

@@ -73,6 +73,7 @@ export interface TableData {
   brandName: string;
   brandLogoPath: string;
   brandStatus: string;
+  voucherId?: string;
   brandCategory: string;
   highlights: string[];
   expirationDate: string;

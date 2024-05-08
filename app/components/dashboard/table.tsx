@@ -15,8 +15,7 @@ export default async function DataTable({
   filters: ServerSideFilters;
 }) {
   const metadata = await getFilteredMetadata(filters);
-  const formattedMetadata = transformMetadata(metadata);
-  const limitedMetadata = formattedMetadata?.slice(0, +filters.tableRows);
+  const limitedMetadata = metadata?.slice(0, +filters.tableRows);
 
   const totalPages = Math.ceil(
     Number(limitedMetadata.length) / +filters.tableRows
@@ -86,7 +85,10 @@ export default async function DataTable({
                     </td>
                   )}
                   <td className='whitespace-nowrap py-3 pl-6 pr-3'>
-                    <Dropdown id={data.brandId} />
+                    <Dropdown
+                      brandId={data.brandId}
+                      voucherId={data.voucherId}
+                    />
                   </td>
                 </tr>
               ))}
