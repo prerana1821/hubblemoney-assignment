@@ -34,8 +34,15 @@ const getFilteredMetadata = async (filters: ServerSideFilters) => {
       brandQuery = brandQuery.ilike("name", `%${brandName}%`);
     }
 
-    if (brandCategory && brandCategory.length > 0) {
-      brandQuery = brandQuery.in("category", brandCategory);
+    if (
+      (brandCategory && brandCategory.length > 0) ||
+      brandCategory === typeof "string"
+    ) {
+      if (Array.isArray(brandCategory)) {
+        brandQuery = brandQuery.in("category", brandCategory);
+      } else {
+        brandQuery = brandQuery.eq("category", brandCategory);
+      }
     }
 
     if (brandStatus) {

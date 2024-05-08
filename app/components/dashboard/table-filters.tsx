@@ -5,7 +5,7 @@ import CheckboxList from "../shared/checkbox-list";
 import LabeledInput from "../shared/labeled-input";
 import LabeledSelect from "../shared/labeled-select";
 import MultiSelectorChip from "../shared/multi-selector";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import queryString from "query-string";
 import { FilterFormData } from "@/types/app";
 import useDebounce from "@/hooks/useDebounce";
@@ -14,6 +14,7 @@ import { BRAND_STATUS, TABLE_COLUMNS } from "@/app/utils/constants";
 const TableFilters = () => {
   const pathname = usePathname();
   const { replace } = useRouter();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState<FilterFormData>({
     brandName: "",
     brandCategory: {
@@ -47,6 +48,65 @@ const TableFilters = () => {
 
     replace(`${pathname}${queryParams ? "?" + queryParams : ""}`);
   }, [formData]);
+
+  useEffect(() => {
+    const brandNameFromParams = searchParams.get("brandName");
+    if (brandNameFromParams !== null) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        brandName: brandNameFromParams,
+      }));
+    }
+
+    if (searchParams.get("brandCategory")) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        brandCategory: {
+          ...prevFormData.brandCategory,
+          selected: searchParams.getAll("brandCategory"),
+        },
+      }));
+    }
+
+    const brandStatusFromParams = searchParams.get("brandName");
+    if (brandStatusFromParams !== null) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        brandStatus: brandStatusFromParams,
+      }));
+    }
+
+    const expirationDateFromParams = searchParams.get("expirationDate");
+    if (expirationDateFromParams !== null) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        expirationDate: expirationDateFromParams,
+      }));
+    }
+
+    const discountPercentageFromParams = searchParams.get("discountPercentage");
+    if (discountPercentageFromParams !== null) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        discountPercentage: discountPercentageFromParams,
+      }));
+    }
+
+    const tableRowsFromParams = searchParams.get("tableRows");
+    if (tableRowsFromParams !== null) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        tableRows: tableRowsFromParams,
+      }));
+    }
+
+    if (searchParams.get("selectedColumns")) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        selectedColumns: searchParams.getAll("selectedColumns"),
+      }));
+    }
+  }, [searchParams]);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>

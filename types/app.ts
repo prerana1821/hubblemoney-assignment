@@ -64,7 +64,7 @@ export interface FilterFormData {
 
 export interface ServerSideFilters
   extends Omit<FilterFormData, "brandCategory"> {
-  brandCategory: string[];
+  brandCategory: string[] | string;
   currentPage: number;
 }
 
