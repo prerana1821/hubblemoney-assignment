@@ -111,7 +111,6 @@ export default function Form({
 
         if (logoError) {
           console.error({ logoError });
-
           setIsLoading(false);
           return toast.error("Failed logo upload.");
         }

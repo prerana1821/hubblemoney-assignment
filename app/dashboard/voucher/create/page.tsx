@@ -2,7 +2,7 @@
 // import { fetchCustomers } from "@/app/lib/data";
 import getBrandNames from "@/app/actions/getBrandNames";
 import Breadcrumbs from "@/app/components/layout/breadcrumbs";
-import Form from "@/app/components/voucher/create-form";
+import Form from "@/app/components/voucher/form";
 
 export default async function Page() {
   const brands = await getBrandNames();

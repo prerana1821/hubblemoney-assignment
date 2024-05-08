@@ -17,6 +17,7 @@ import uniqid from "uniqid";
 import Link from "next/link";
 import { Button } from "../shared/button";
 import toast from "react-hot-toast";
+import { formatToSupabaseDate } from "@/app/utils/string-manipulation";
 
 const voucherFormInitialState: VoucherFormState = {
   brandName: { value: "", error: null },
@@ -48,8 +49,41 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
   const supabaseClient = useSupabaseClient();
   const router = useRouter();
 
+  let deafultEditVoucherFormState: VoucherFormState = {} as VoucherFormState;
+
+  console.log({ voucher });
+
+  if (voucher) {
+    deafultEditVoucherFormState = {
+      bannerImage: {
+        name: "",
+        photo: "",
+        type: "",
+        size: 0,
+        file: null,
+        path: bannerUrl,
+        error: null,
+      },
+      brandName: { value: voucher?.brand.name, error: null },
+      discountPercentage: { value: voucher?.discountPercentage, error: null },
+      expirationDate: {
+        value: formatToSupabaseDate(voucher?.expirationDate),
+        error: null,
+      },
+      highlightsDescription: {
+        value: voucher?.highlightsDescription,
+        error: null,
+      },
+      FAQs: voucher.FAQs.map((faq) => ({ ...faq, error: null })),
+      highlights: voucher?.highlights.map((highlight) => ({
+        ...highlight,
+        error: null,
+      })),
+    };
+  }
+
   const [formData, setFormData] = useState<VoucherFormState>(
-    voucherFormInitialState
+    voucher ? deafultEditVoucherFormState : voucherFormInitialState
   );
 
   const handleVoucherChange = (
@@ -120,7 +154,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
     try {
       setIsLoading(true);
 
-      if (!formData.bannerImage?.file) {
+      if (!formData.bannerImage?.file && formData.bannerImage.path === "") {
         setIsLoading(false);
         return toast.error("Missing Banner Image File.");
       }
@@ -133,59 +167,110 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
       }
 
       const uniqueID = uniqid();
+      let bannerData;
 
-      const { data: bannerData, error: bannerError } =
-        await supabaseClient.storage
-          .from("banners")
-          .upload(
-            `banner-${formData.bannerImage.name}-${uniqueID}`,
-            formData.bannerImage.file,
-            {
-              cacheControl: "3600",
-              upsert: false,
-            }
-          );
+      if (
+        !formData.bannerImage.path ||
+        formData.bannerImage.path.length === 0
+      ) {
+        const { data: _bannerData, error: bannerError } =
+          await supabaseClient.storage
+            .from("banners")
+            .upload(
+              `banner-${formData.bannerImage.name}-${uniqueID}`,
+              formData.bannerImage.file as File,
+              {
+                cacheControl: "3600",
+                upsert: false,
+              }
+            );
 
-      if (bannerError) {
-        console.error({ bannerError });
-        setIsLoading(false);
-        return toast.error("Failed Banner Image upload.");
+        if (bannerError) {
+          console.error({ bannerError });
+          setIsLoading(false);
+          return toast.error("Failed Banner Image upload.");
+        }
+
+        bannerData = _bannerData;
       }
 
       const selectedBrandId = brandNames.find(
         (brand) => brand.name === formData.brandName.value
       );
 
-      const { error: supabaseError } = await supabaseClient
-        .from("vouchers")
-        .insert({
-          brand_id: selectedBrandId?.id,
-          banner_path: bannerData.path,
-          discount_percentage: formData.discountPercentage.value,
-          expiration_date: formData.expirationDate.value,
-          faq: JSON.stringify(
-            formData.FAQs.map((faq) => ({
-              question: faq.question,
-              answer: faq.answer,
-            }))
-          ),
-          highlights: JSON.stringify({
-            description: formData.highlightsDescription,
-            list: formData.highlights.map((highlight) => ({
-              title: highlight.title,
-              text: highlight.text,
-            })),
-          }),
-        });
+      console.log(3, { voucher });
 
-      if (supabaseError) {
-        setIsLoading(false);
-        return toast.error(supabaseError.message);
+      if (voucher) {
+        console.log("Hii");
+        const { error: supabaseEditError } = await supabaseClient
+          .from("vouchers")
+          .upsert({
+            id: voucher?.id,
+            brand_id: voucher?.brand.id,
+            ...(formData.bannerImage.path
+              ? {}
+              : { banner_path: bannerData?.path }),
+            discount_percentage: formData.discountPercentage.value,
+            expiration_date: formData.expirationDate.value,
+            faq: JSON.stringify(
+              formData.FAQs.map((faq) => ({
+                question: faq.question,
+                answer: faq.answer,
+              }))
+            ),
+            highlights: JSON.stringify({
+              description: formData.highlightsDescription,
+              list: formData.highlights.map((highlight) => ({
+                title: highlight.title,
+                text: highlight.text,
+              })),
+            }),
+          });
+
+        if (supabaseEditError) {
+          setIsLoading(false);
+          return toast.error(
+            `Error updating the voucher: ${supabaseEditError.message}`
+          );
+        } else {
+          toast.success("Voucher is updated for the brand successfully.");
+          router.push("/dashboard");
+        }
+      } else {
+        console.log("Hello");
+
+        const { error: supabaseError } = await supabaseClient
+          .from("vouchers")
+          .insert({
+            brand_id: selectedBrandId?.id,
+            banner_path: bannerData?.path,
+            discount_percentage: formData.discountPercentage.value,
+            expiration_date: formData.expirationDate.value,
+            faq: JSON.stringify(
+              formData.FAQs.map((faq) => ({
+                question: faq.question,
+                answer: faq.answer,
+              }))
+            ),
+            highlights: JSON.stringify({
+              description: formData.highlightsDescription,
+              list: formData.highlights.map((highlight) => ({
+                title: highlight.title,
+                text: highlight.text,
+              })),
+            }),
+          });
+
+        if (supabaseError) {
+          setIsLoading(false);
+          return toast.error(supabaseError.message);
+        } else {
+          toast.success("Voucher is added to the brand!");
+        }
       }
 
       router.refresh();
       setIsLoading(false);
-      toast.success("Voucher is added to the brand!");
       setFormData({
         ...voucherFormInitialState,
         FAQs: [{ question: "", answer: "", error: null }],
@@ -197,6 +282,8 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
       setIsLoading(false);
     }
   };
+
+  console.log(formData);
 
   return (
     <form onSubmit={handleFormSubmit}>
@@ -242,7 +329,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
             name='brandName'
             value={formData.brandName.value}
             onChange={handleVoucherChange}
-            disabled={isLoading}
+            disabled={isLoading || !!voucher}
             error={formData.brandName.error}
           >
             <option value='' disabled>
@@ -392,7 +479,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
           Cancel
         </Link>
         <Button type='submit' disabled={isLoading}>
-          Add Brand Voucher
+          {voucher ? "Update" : "Add"} Brand Voucher
         </Button>
       </div>
     </form>

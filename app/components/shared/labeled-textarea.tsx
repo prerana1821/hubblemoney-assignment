@@ -33,7 +33,6 @@ const LabeledTextarea = forwardRef<HTMLTextAreaElement, LabeledTextareaProps>(
             {...props}
             name={name}
             value={value}
-            minLength={minLength}
             onChange={onChange}
             className={twMerge(
               "peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500",

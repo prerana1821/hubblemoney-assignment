@@ -2,7 +2,7 @@ import getBrandNames from "@/app/actions/getBrandNames";
 import getImage from "@/app/actions/getImage";
 import getVoucherDetailsById from "@/app/actions/getVoucherDetailsById";
 import Breadcrumbs from "@/app/components/layout/breadcrumbs";
-import Form from "@/app/components/voucher/create-form";
+import Form from "@/app/components/voucher/form";
 import { notFound } from "next/navigation";
 
 export default async function Page({ params }: { params: { id: string } }) {

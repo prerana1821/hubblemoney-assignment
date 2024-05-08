@@ -26,7 +26,9 @@ const Dropdown: FC<DropdownProps> = ({ brandId, voucherId }) => {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Deleted Brand Data Successfully");
+      toast.success(
+        `Deleted ${type === "brands" ? "Brand" : "Voucher"} Data Successfully`
+      );
       router.refresh();
     }
   };
