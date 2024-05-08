@@ -12,3 +12,7 @@ export const formatDateToLocal = (dateStr: string): string => {
 
   return formattedDate;
 };
+
+export const isDate = (str: string): boolean => {
+  return !isNaN(Date.parse(str));
+};

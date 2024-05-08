@@ -28,8 +28,6 @@ export function FileUploader({
   const [dragging, setDragging] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  console.log(ownerLicense[0].path);
-
   function handleDrop(
     e: DragEvent | React.ChangeEvent<HTMLInputElement>,
     type: "inputFile" | "dropArea"

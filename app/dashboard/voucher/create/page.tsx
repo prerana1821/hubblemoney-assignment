@@ -19,7 +19,7 @@ export default async function Page() {
           },
         ]}
       />
-      <Form brands={brands} />
+      <Form brandNames={brands} />
     </main>
   );
 }

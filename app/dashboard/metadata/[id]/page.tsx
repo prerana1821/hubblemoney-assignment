@@ -21,7 +21,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           { label: "Brand Metadata", href: "/dashboard/metadata" },
           {
             label: "View Metadata",
-            href: `/dashboard/metadata/${id}/edit`,
+            href: `/dashboard/metadata/${id}`,
             active: true,
           },
         ]}

@@ -14,11 +14,11 @@ import {
   uploadFiles,
 } from "@/app/utils/file-handling";
 import { BRAND_STATUS, CATEGORIES } from "@/app/utils/constants";
-import Link from "next/link";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { redirect, useRouter } from "next/navigation";
-import uniqid from "uniqid";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import uniqid from "uniqid";
+import Link from "next/link";
 
 const defaultAddBrandFormState: BrandFormState = {
   logo: { name: "", photo: "", type: "", size: 0, file: null, error: null },
@@ -80,17 +80,12 @@ export default function Form({
     try {
       setIsLoading(true);
 
-      console.log(formData.logo);
-      console.log(formData.logo.path);
-
       if (!formData.logo?.file && formData.logo.path === "") {
         setIsLoading(false);
         return toast.error("Missing logo file");
       }
 
-      const hasErrors = handleFormValidations(formData, setFormData);
-
-      console.log(hasErrors);
+      const hasErrors = handleFormValidations(formData, setFormData, "brand");
 
       if (hasErrors) {
         setIsLoading(false);
@@ -267,7 +262,9 @@ export default function Form({
         >
           Cancel
         </Link>
-        <Button type='submit'>{brand ? "Update" : "Add"} Brand Metadata</Button>
+        <Button type='submit' disabled={isLoading}>
+          {brand ? "Update" : "Add"} Brand Metadata
+        </Button>
       </div>
     </form>
   );

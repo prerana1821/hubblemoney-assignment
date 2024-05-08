@@ -96,6 +96,15 @@ export type BrandDataFromDB = Omit<BrandData, "logo"> & {
   id: string;
 };
 
+export type VoucherDataFromDB = Omit<
+  VoucherManagementData,
+  "bannerImage" | "brandName"
+> & {
+  id: string;
+  banner_path: string;
+  brand: { id: string; name: string; category: (typeof CATEGORIES)[number] };
+};
+
 export interface BrandFormState {
   logo: ImageFileData & {
     error: string | null;
@@ -116,4 +125,29 @@ export interface BrandFormState {
     value: (typeof BRAND_STATUS)[number];
     error: string | null;
   };
+}
+
+export interface VoucherFormState {
+  brandName: { value: string; error: string | null };
+  bannerImage: ImageFileData & {
+    error: string | null;
+  };
+  discountPercentage: { value: number; error: string | null };
+  expirationDate: { value: string; error: string | null };
+  highlightsDescription: { value: string; error: string | null };
+  FAQs: { question: string; answer: string; error: string | null }[];
+  highlights: { title: string; text: string; error: string | null }[];
+}
+
+export type FormType = "brand" | "voucher";
+
+export interface FormValidationData {
+  name: { value: string; error: string | null };
+  description?: { value: string; error: string | null };
+  category?: { value: string; error: string | null };
+  status?: { value: string; error: string | null };
+  brandName?: { value: string; error: string | null };
+  discountPercentage?: { value: number; error: string | null };
+  expirationDate?: { value: string; error: string | null };
+  highlightsDescription?: { value: string; error: string | null };
 }

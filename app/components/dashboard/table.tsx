@@ -1,8 +1,5 @@
 import getFilteredMetadata from "@/app/actions/getFilteredMetadata";
-import {
-  renderTableHeaders,
-  transformMetadata,
-} from "@/app/utils/table-data-handling";
+import { renderTableHeaders } from "@/app/utils/table-data-handling";
 import { ServerSideFilters, TableData } from "@/types/app";
 import { BrandLogo } from "./brand-logo";
 import { formatDateToLocal } from "@/app/utils/string-manipulation";

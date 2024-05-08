@@ -1,36 +1,54 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { Brand, VoucherManagementData } from "@/types/app";
+import { Brand, VoucherDataFromDB, VoucherFormState } from "@/types/app";
 import LabeledInput from "../shared/labeled-input";
 import LabeledTextarea from "../shared/labeled-textarea";
 import LabeledSelect from "../shared/labeled-select";
-import LabeledRadio from "../shared/labeled-radio";
 import { FileUploader } from "../shared/file-uploader";
-import { deleteFile, uploadFiles } from "@/app/utils/file-handling";
-import toast from "react-hot-toast";
+import {
+  deleteFile,
+  handleFormValidations,
+  uploadFiles,
+} from "@/app/utils/file-handling";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
 import uniqid from "uniqid";
 import Link from "next/link";
 import { Button } from "../shared/button";
+import toast from "react-hot-toast";
 
-const voucherFormInitialState: VoucherManagementData = {
-  brandName: "",
-  bannerImage: { name: "", photo: "", type: "", size: 0, file: null },
-  discountPercentage: 0,
-  expirationDate: "",
-  FAQs: [{ question: "", answer: "" }],
-  highlightsDescription: "",
-  highlights: [{ title: "", text: "" }],
+const voucherFormInitialState: VoucherFormState = {
+  brandName: { value: "", error: null },
+  bannerImage: {
+    name: "",
+    photo: "",
+    type: "",
+    size: 0,
+    file: null,
+    error: null,
+  },
+  discountPercentage: { value: 0, error: null },
+  expirationDate: { value: "", error: null },
+  highlightsDescription: { value: "", error: null },
+  FAQs: [{ question: "", answer: "", error: null }],
+  highlights: [{ title: "", text: "", error: null }],
 };
 
-export default function Form({ brands }: { brands: Brand[] }) {
+interface FromProps {
+  brandNames: Brand[];
+  voucher?: VoucherDataFromDB;
+  bannerUrl?: string;
+}
+
+// TODO: Add remove highlight & FAQ
+
+export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
   const [isLoading, setIsLoading] = useState(false);
   const supabaseClient = useSupabaseClient();
   const router = useRouter();
 
-  const [formData, setFormData] = useState<VoucherManagementData>(
+  const [formData, setFormData] = useState<VoucherFormState>(
     voucherFormInitialState
   );
 
@@ -43,7 +61,7 @@ export default function Form({ brands }: { brands: Brand[] }) {
 
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: { value },
     });
   };
 
@@ -54,14 +72,13 @@ export default function Form({ brands }: { brands: Brand[] }) {
     >
   ) => {
     const { name, value } = event.target;
-    const FAQs = [...formData.FAQs];
-    if (name === "question" || name === "answer") {
-      FAQs[index][name] = value;
-      setFormData({
-        ...formData,
-        FAQs,
-      });
-    }
+    const newFAQs = formData.FAQs.map((faq, i) =>
+      i === index ? { ...faq, [name]: value } : faq
+    );
+    setFormData({
+      ...formData,
+      FAQs: newFAQs,
+    });
   };
 
   const handleHighlightChange = (
@@ -71,27 +88,29 @@ export default function Form({ brands }: { brands: Brand[] }) {
     >
   ) => {
     const { name, value } = event.target;
-    const highlights = [...formData.highlights];
-    if (name === "title" || name === "text") {
-      highlights[index][name] = value;
-      setFormData({
-        ...formData,
-        highlights,
-      });
-    }
+    const newHighlights = formData.highlights.map((highlight, i) =>
+      i === index ? { ...highlight, [name]: value } : highlight
+    );
+    setFormData({
+      ...formData,
+      highlights: newHighlights,
+    });
   };
 
   const addFAQ = () => {
     setFormData({
       ...formData,
-      FAQs: [...formData.FAQs, { question: "", answer: "" }],
+      FAQs: [...formData.FAQs, { question: "", answer: "", error: null }],
     });
   };
 
   const addHighlight = () => {
     setFormData({
       ...formData,
-      highlights: [...formData.highlights, { title: "", text: "" }],
+      highlights: [
+        ...formData.highlights,
+        { title: "", text: "", error: null },
+      ],
     });
   };
 
@@ -100,9 +119,17 @@ export default function Form({ brands }: { brands: Brand[] }) {
 
     try {
       setIsLoading(true);
+
       if (!formData.bannerImage?.file) {
         setIsLoading(false);
         return toast.error("Missing Banner Image File.");
+      }
+
+      const hasErrors = handleFormValidations(formData, setFormData, "voucher");
+
+      if (hasErrors) {
+        setIsLoading(false);
+        return;
       }
 
       const uniqueID = uniqid();
@@ -125,8 +152,8 @@ export default function Form({ brands }: { brands: Brand[] }) {
         return toast.error("Failed Banner Image upload.");
       }
 
-      const selectedBrandId = brands.find(
-        (brand) => brand.name === formData.brandName
+      const selectedBrandId = brandNames.find(
+        (brand) => brand.name === formData.brandName.value
       );
 
       const { error: supabaseError } = await supabaseClient
@@ -134,12 +161,20 @@ export default function Form({ brands }: { brands: Brand[] }) {
         .insert({
           brand_id: selectedBrandId?.id,
           banner_path: bannerData.path,
-          discount_percentage: formData.discountPercentage,
-          expiration_date: formData.expirationDate,
-          faq: JSON.stringify(formData.FAQs),
+          discount_percentage: formData.discountPercentage.value,
+          expiration_date: formData.expirationDate.value,
+          faq: JSON.stringify(
+            formData.FAQs.map((faq) => ({
+              question: faq.question,
+              answer: faq.answer,
+            }))
+          ),
           highlights: JSON.stringify({
             description: formData.highlightsDescription,
-            list: formData.highlights,
+            list: formData.highlights.map((highlight) => ({
+              title: highlight.title,
+              text: highlight.text,
+            })),
           }),
         });
 
@@ -151,7 +186,11 @@ export default function Form({ brands }: { brands: Brand[] }) {
       router.refresh();
       setIsLoading(false);
       toast.success("Voucher is added to the brand!");
-      setFormData(voucherFormInitialState);
+      setFormData({
+        ...voucherFormInitialState,
+        FAQs: [{ question: "", answer: "", error: null }],
+        highlights: [{ title: "", text: "", error: null }],
+      });
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
@@ -174,52 +213,42 @@ export default function Form({ brands }: { brands: Brand[] }) {
                 "voucherBanner",
                 formData
               );
-              setFormData(updatedFormData as VoucherManagementData);
+              setFormData(updatedFormData as VoucherFormState);
             }}
             onDelete={() => {
               const updatedFormData = deleteFile("voucherBanner", formData);
-              setFormData(updatedFormData as VoucherManagementData);
+              setFormData(updatedFormData as VoucherFormState);
             }}
             count={1}
             formats={["jpg", "jpeg", "png"]}
           />
-          <LabeledTextarea
-            id='highlightsDescription'
-            rows={4}
-            placeholder='Write the description here...'
-            label='Highlights Description: '
-            name='highlightsDescription'
-            disabled={isLoading}
-            required={true}
-            value={formData.highlightsDescription}
-            onChange={handleVoucherChange}
-            // error={state.errors?.message} // Pass the error message from your form state
-          />
+
           <LabeledInput
             id='discountPercentage'
             type='number'
             label={"Discount Percentage"}
             disabled={isLoading}
             name='discountPercentage'
-            value={formData.discountPercentage}
+            value={formData.discountPercentage.value}
             className='mt-1 block w-full rounded-md border-gray-300'
             onChange={handleVoucherChange}
             required={true}
+            error={formData.discountPercentage.error}
             placeholder='Discount Percentage'
           />
           <LabeledSelect
             id='brandName'
             label='Choose brand name'
             name='brandName'
-            value={formData.brandName}
+            value={formData.brandName.value}
             onChange={handleVoucherChange}
             disabled={isLoading}
-            // error={state.errors?.customerId}
+            error={formData.brandName.error}
           >
             <option value='' disabled>
               Select a brand
             </option>
-            {brands?.map((brand: Brand) => (
+            {brandNames?.map((brand: Brand) => (
               <option value={brand.name} key={brand.id}>
                 {brand.name}
               </option>
@@ -232,11 +261,12 @@ export default function Form({ brands }: { brands: Brand[] }) {
             type='datetime-local'
             label={"Expiration Date:"}
             name='expirationDate'
-            value={formData.expirationDate}
+            value={formData.expirationDate.value}
             className='mt-1 block w-full rounded-md border-gray-300'
             onChange={handleVoucherChange}
             required={true}
             placeholder='Expiration Date:'
+            error={formData.expirationDate.error}
           />
           <div className='mb-4'>
             <div className='flex flex-row justify-between align-middle'>
@@ -262,6 +292,7 @@ export default function Form({ brands }: { brands: Brand[] }) {
                   onChange={(e) => handleFAQChange(index, e)}
                   required={true}
                   placeholder='Question'
+                  min={5}
                 />
                 <LabeledTextarea
                   id='faq-answer'
@@ -269,15 +300,36 @@ export default function Form({ brands }: { brands: Brand[] }) {
                   placeholder='Write the answer here...'
                   label='Answer: '
                   name='answer'
+                  minLength={5}
                   disabled={isLoading}
                   required={true}
                   value={faq.answer}
                   onChange={(e) => handleFAQChange(index, e)}
-                  // error={state.errors?.message} // Pass the error message from your form state
                 />
+                {faq.error && (
+                  <div
+                    id={`${index}-error`}
+                    aria-live='polite'
+                    aria-atomic='true'
+                  >
+                    <p className='mt-2 text-sm text-red-500'>{faq.error}</p>
+                  </div>
+                )}
               </div>
             ))}
           </div>
+          <LabeledTextarea
+            id='highlightsDescription'
+            rows={4}
+            placeholder='Write the description here...'
+            label='Highlights Description: '
+            name='highlightsDescription'
+            disabled={isLoading}
+            required={true}
+            value={formData.highlightsDescription.value}
+            onChange={handleVoucherChange}
+            error={formData.highlightsDescription.error}
+          />
           <div>
             <div className='flex flex-row justify-between align-middle'>
               <h3 className='text-lg font-semibold mb-2'>Highlights</h3>
@@ -295,13 +347,14 @@ export default function Form({ brands }: { brands: Brand[] }) {
                   id='highlight-title-index'
                   disabled={isLoading}
                   type='text'
-                  label={"Question"}
+                  label={"Title"}
+                  min={5}
                   name='title'
                   value={highlight.title}
                   className='mt-1 block w-full rounded-md border-gray-300'
                   onChange={(e) => handleHighlightChange(index, e)}
                   required={true}
-                  placeholder='Question'
+                  placeholder='Title'
                 />
                 <LabeledTextarea
                   id='highlight-text'
@@ -309,12 +362,23 @@ export default function Form({ brands }: { brands: Brand[] }) {
                   placeholder='Write the description here...'
                   label='Description: '
                   name='text'
+                  minLength={5}
                   disabled={isLoading}
                   required={true}
                   value={highlight.text}
                   onChange={(e) => handleHighlightChange(index, e)}
-                  // error={state.errors?.message} // Pass the error message from your form state
                 />
+                {highlight.error && (
+                  <div
+                    id={`${index}-error`}
+                    aria-live='polite'
+                    aria-atomic='true'
+                  >
+                    <p className='mt-2 text-sm text-red-500'>
+                      {highlight.error}
+                    </p>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -327,7 +391,9 @@ export default function Form({ brands }: { brands: Brand[] }) {
         >
           Cancel
         </Link>
-        <Button type='submit'>Add Brand Voucher</Button>
+        <Button type='submit' disabled={isLoading}>
+          Add Brand Voucher
+        </Button>
       </div>
     </form>
   );
