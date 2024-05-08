@@ -1,3 +1,4 @@
+import { BRAND_STATUS, CATEGORIES } from "@/app/utils/constants";
 export interface UserDetails {
   id: string;
   full_name?: string;
@@ -13,8 +14,8 @@ export interface BrandData {
   logo: ImageFileData;
   name: string;
   description: string;
-  category: "groceries" | "fashion" | "beauty" | "travel";
-  status: "active" | "inactive" | "verified";
+  category: (typeof CATEGORIES)[number];
+  status: (typeof BRAND_STATUS)[number];
 }
 
 export interface FAQ {
@@ -43,6 +44,7 @@ export interface ImageFileData {
   type: string;
   size: number;
   file: File | null;
+  path?: string;
 }
 
 export interface BrandCategory {
@@ -87,3 +89,8 @@ export interface MetadataItem {
   expirationDate: string[];
   discountPercentage: number[];
 }
+
+export type BrandDataFromDB = Omit<BrandData, "logo"> & {
+  logo_path: string;
+  id: string;
+};

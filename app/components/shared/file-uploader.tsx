@@ -10,7 +10,7 @@ interface FileUploaderProps {
   label: string;
   ownerLicense: ImageFileData[];
   onUpload: (rawfiles: ImageFileData[], id: string) => void;
-  onDelete: (id: string) => void;
+  onDelete: () => void;
   count: number;
   formats: string[];
 }
@@ -206,7 +206,7 @@ export function FileUploader({
                   <div className='space-y-1'>
                     <div
                       className='text-gray-500 text-[17px] cursor-pointer'
-                      onClick={() => onDelete(id)}
+                      onClick={() => onDelete()}
                     >
                       <BsX className='ml-auto' />
                     </div>
@@ -225,6 +225,26 @@ export function FileUploader({
               />
             </div>
           ))}
+        </div>
+      )}
+
+      {ownerLicense[0].path && (
+        <div className='mt-4 mb-4'>
+          <div className='relative w-full px-3 py-3.5 rounded-md bg-slate-200 space-y-3 flex flex-col'>
+            <div
+              className='text-gray-500 text-[17px] cursor-pointer absolute top-2 right-2'
+              onClick={() => onDelete()}
+            >
+              <BsX className='ml-auto' />
+            </div>
+            <Image
+              className='self-center'
+              src={ownerLicense[0].path}
+              alt={"brand logo"}
+              width={200}
+              height={200}
+            />{" "}
+          </div>
         </div>
       )}
     </>

@@ -48,6 +48,7 @@ export const deleteFile = (
       type: "",
       size: 0,
       file: null,
+      path: "",
     };
   } else if ("bannerImage" in updatedFormData && type === "voucherBanner") {
     updatedFormData.bannerImage = {
@@ -56,6 +57,7 @@ export const deleteFile = (
       type: "",
       size: 0,
       file: null,
+      path: "",
     };
   }
   return updatedFormData;

@@ -45,8 +45,6 @@ const TableFilters = () => {
       }
     );
 
-    console.log(queryParams);
-
     replace(`${pathname}${queryParams ? "?" + queryParams : ""}`);
   }, [formData]);
 

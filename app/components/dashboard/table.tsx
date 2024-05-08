@@ -22,8 +22,6 @@ export default async function DataTable({
     Number(limitedMetadata.length) / +filters.tableRows
   );
 
-  console.log({ totalPages });
-
   return (
     <div className='mt-6 flow-root'>
       <div className='inline-block min-w-full align-middle'>

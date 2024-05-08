@@ -1,32 +1,59 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { BrandData, ImageFileData, VoucherManagementData } from "@/types/app";
+import { BrandData, BrandDataFromDB } from "@/types/app";
 import LabeledInput from "../shared/labeled-input";
 import LabeledTextarea from "../shared/labeled-textarea";
 import LabeledSelect from "../shared/labeled-select";
 import LabeledRadio from "../shared/labeled-radio";
 import { FileUploader } from "../shared/file-uploader";
-import { deleteFile, uploadFiles } from "@/app/utils/file-handling";
-import Link from "next/link";
 import { Button } from "../shared/button";
+import { deleteFile, uploadFiles } from "@/app/utils/file-handling";
+import { BRAND_STATUS, CATEGORIES } from "@/app/utils/constants";
+import Link from "next/link";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import uniqid from "uniqid";
 import toast from "react-hot-toast";
-import { BRAND_STATUS, CATEGORIES } from "@/app/utils/constants";
 
 const brandFormInitialState: BrandData = {
   logo: { name: "", photo: "", type: "", size: 0, file: null },
   name: "",
   description: "",
-  category: "groceries",
-  status: "active",
+  category: "One stop shop",
+  status: "Active",
 };
 
-export default function Form() {
+export default function Form({
+  brand,
+  logoUrl,
+}: {
+  brand?: BrandDataFromDB;
+  logoUrl?: string;
+}) {
+  let brandEditFormInitialState: BrandData = {} as BrandData;
+
+  if (brand) {
+    brandEditFormInitialState = {
+      logo: {
+        name: "",
+        photo: "",
+        type: "",
+        size: 0,
+        file: null,
+        path: logoUrl,
+      },
+      name: brand?.name,
+      description: brand?.description,
+      category: brand?.category,
+      status: brand?.status,
+    };
+  }
+
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState<BrandData>(brandFormInitialState);
+  const [formData, setFormData] = useState<BrandData>(
+    brand ? brandEditFormInitialState : brandFormInitialState
+  );
   const supabaseClient = useSupabaseClient();
   const router = useRouter();
 
@@ -48,20 +75,14 @@ export default function Form() {
     try {
       setIsLoading(true);
 
-      // const imageFile = values.image?.[0];
-      // const songFile = values.song?.[0];
-
-      // if (!imageFile || !songFile || !user) {
-      //   toast.error("Missing fields");
-      //   return;
-      // }
-
       if (!formData.logo?.file) {
         setIsLoading(false);
         return toast.error("Missing logo file");
       }
 
       const uniqueID = uniqid();
+
+      // TODO: delete image from storage if edit form
 
       const { data: logoData, error: logoError } = await supabaseClient.storage
         .from("logos")
@@ -77,37 +98,50 @@ export default function Form() {
         return toast.error("Failed logo upload.");
       }
 
-      // const { data: imageData, error: imageError } =
-      //   await supabaseClient.storage
-      //     .from("images")
-      //     .upload(`image-${values.title}-${uniqueID}`, imageFile, {
-      //       cacheControl: "3600",
-      //       upsert: false,
-      //     });
+      if (brand) {
+        const { error: supabaseEditError } = await supabaseClient
+          .from("brands")
+          .upsert({
+            id: brand?.id,
+            name: formData.name,
+            description: formData.description,
+            category: formData.category,
+            logo_path: logoData.path,
+            status: formData.status,
+          });
 
-      // if (imageError) {
-      //   setIsLoading(false);
-      //   return toast.error("Failed image upload.");
-      // }
+        if (supabaseEditError) {
+          setIsLoading(false);
+          return toast.error(
+            `Error updating the brand: ${supabaseEditError.message}`
+          );
+        } else {
+          toast.success("Brand Metadata is updated successfully.");
+          redirect("/dashboard");
+        }
+      } else {
+        const { error: supabaseInsertError } = await supabaseClient
+          .from("brands")
+          .insert({
+            name: formData.name,
+            description: formData.description,
+            category: formData.category,
+            logo_path: logoData.path,
+            status: formData.status,
+          });
 
-      const { error: supabaseError } = await supabaseClient
-        .from("brands")
-        .insert({
-          name: formData.name,
-          description: formData.description,
-          category: formData.category,
-          logo_path: logoData.path,
-          status: formData.status,
-        });
-
-      if (supabaseError) {
-        setIsLoading(false);
-        return toast.error(supabaseError.message);
+        if (supabaseInsertError) {
+          setIsLoading(false);
+          return toast.error(
+            `Error inserting the brand: ${supabaseInsertError.message}`
+          );
+        } else {
+          toast.success("Brand Metadata is added!");
+        }
       }
 
       router.refresh();
       setIsLoading(false);
-      toast.success("Brand Metadata is added!");
       setFormData(brandFormInitialState);
     } catch (error) {
       toast.error("Something went wrong");

@@ -1,4 +1,4 @@
-export const CATEGORIES: string[] = [
+export const CATEGORIES = [
   "Food",
   "One stop shop",
   "Groceries",
@@ -9,7 +9,7 @@ export const CATEGORIES: string[] = [
   "Gaming",
   "Hotels",
   "Electronics",
-];
+] as const;
 
 export const TABLE_COLUMNS = [
   { label: "Name", value: "Brand Name" },
@@ -20,4 +20,4 @@ export const TABLE_COLUMNS = [
   { label: "Discount %", value: "Voucher Discount" },
 ];
 
-export const BRAND_STATUS = ["Active", "Inactive"];
+export const BRAND_STATUS = ["Active", "Inactive"] as const;
