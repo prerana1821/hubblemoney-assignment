@@ -34,7 +34,7 @@ export default async function DataTable({
             <tbody className='bg-white'>
               {limitedMetadata?.map((data: TableData) => (
                 <tr
-                  key={data.brandId}
+                  key={`data-${data.voucherId}-${data.brandId}`}
                   className='w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg'
                 >
                   {(filters.selectedColumns.length === 0 ||

@@ -28,6 +28,8 @@ const TableFilters = () => {
     tableRows: "10",
   });
 
+  console.log({ formData });
+
   const debouncedValue = useDebounce({
     value: formData.brandName,
     delay: 300,
@@ -39,6 +41,7 @@ const TableFilters = () => {
         ...formData,
         brandName: formData.brandName.length === 0 ? "" : debouncedValue,
         brandCategory: formData.brandCategory.selected,
+        brandStatus: formData.brandStatus,
         page: 1,
       },
       {
@@ -46,8 +49,10 @@ const TableFilters = () => {
       }
     );
 
+    console.log(queryString.parse(queryParams));
+
     replace(`${pathname}${queryParams ? "?" + queryParams : ""}`);
-  }, [formData]);
+  }, [debouncedValue, formData, pathname, replace, formData.brandName]);
 
   useEffect(() => {
     const brandNameFromParams = searchParams.get("brandName");
@@ -68,7 +73,7 @@ const TableFilters = () => {
       }));
     }
 
-    const brandStatusFromParams = searchParams.get("brandName");
+    const brandStatusFromParams = searchParams.get("brandStatus");
     if (brandStatusFromParams !== null) {
       setFormData((prevFormData) => ({
         ...prevFormData,
@@ -112,9 +117,18 @@ const TableFilters = () => {
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+    console.log({ name, value });
+
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,
+    }));
+  };
+
+  const clearInputValue = (name: string) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: "",
     }));
   };
 
@@ -202,9 +216,9 @@ const TableFilters = () => {
           className='mt-1 block w-full rounded-md border-gray-300'
         />
         <LabeledSelect
-          id='status'
+          id='brandStatus'
           label='Choose brand status:'
-          name='status'
+          name='brandStatus'
           className='mt-1 block w-full rounded-md border-gray-300'
           value={formData.brandStatus}
           onChange={handleInputChange}
@@ -217,11 +231,13 @@ const TableFilters = () => {
               {status}
             </option>
           ))}
+          <option value=''>All statuses</option>
         </LabeledSelect>
         <LabeledInput
           id='expirationDate'
           type='datetime-local'
           label={"Minimum Voucher Expiry:"}
+          clearInputValue={clearInputValue}
           name='expirationDate'
           value={formData.expirationDate}
           onChange={handleInputChange}

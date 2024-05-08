@@ -9,7 +9,7 @@ export default async function Page({
     page?: string;
     brandName?: string;
     brandCategory?: string[];
-    status?: string;
+    brandStatus?: string;
     expirationDate?: string;
     discountPercentage?: string;
     selectedColumns?: string[];
@@ -19,7 +19,7 @@ export default async function Page({
   const currentPage = Number(searchParams?.page) || 1;
   const brandName = searchParams?.brandName || "";
   const brandCategory = searchParams?.brandCategory || [];
-  const brandStatus = searchParams?.status || "";
+  const brandStatus = searchParams?.brandStatus || "";
   const expirationDate = searchParams?.expirationDate || "";
   const discountPercentage = searchParams?.discountPercentage || "";
   const selectedColumns = searchParams?.selectedColumns || [];

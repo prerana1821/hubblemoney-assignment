@@ -1,20 +1,32 @@
 import { forwardRef } from "react";
 import { MdOutlinePersonOutline } from "react-icons/md";
 import { twMerge } from "tailwind-merge";
+import { TiDeleteOutline } from "react-icons/ti";
 
 interface LabeledInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   error?: string | null;
+  clearInputValue?: (name: string) => void;
 }
 
 const LabeledInput = forwardRef<HTMLInputElement, LabeledInputProps>(
-  ({ label, error, className, ...props }, ref) => {
+  ({ label, error, className, clearInputValue, ...props }, ref) => {
     return (
       <div className='mb-4'>
-        <label htmlFor={props.id} className='mb-2 block text-sm font-medium'>
-          {label}
-        </label>
+        <div className='flex justify-between align-middle'>
+          <label htmlFor={props.id} className='mb-2 block text-sm font-medium'>
+            {label}
+          </label>
+          {clearInputValue && (
+            <div
+              onClick={() => clearInputValue("expirationDate")}
+              className='w-2 h-2 cursor-pointer pr-4 pt-0.5'
+            >
+              <TiDeleteOutline />
+            </div>
+          )}
+        </div>
         <div className='relative mt-2 rounded-md'>
           <div className='relative'>
             <input
