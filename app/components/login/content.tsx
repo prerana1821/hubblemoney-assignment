@@ -8,17 +8,18 @@ import { redirect, useRouter } from "next/navigation";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useEffect } from "react";
+import useUser from "@/hooks/useUser";
 
 export const LoginContent: React.FC = () => {
   const supabaseClient = useSupabaseClient();
   const router = useRouter();
-  const { session } = useSessionContext();
+  const { user } = useUser();
 
   useEffect(() => {
-    if (session?.user) {
+    if (user?.id) {
       redirect("/dashboard");
     }
-  }, [session, router]);
+  }, [router, user?.id]);
 
   return (
     <div className='flex flex-col gap-y-2 w-full p-6'>

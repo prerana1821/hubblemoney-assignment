@@ -5,7 +5,8 @@
 <!-- - login or dashboard on site page -->
 <!-- - if a brand is deleted, delete the logo as well from storage and associated banners as well -->
 
-- card analytics for metadata and vouchers
+<!-- - card analytics for metadata and vouchers -->
+
 - take all the breadcrumbs to constants
 - css
   <!-- - onhover hightlights -->
