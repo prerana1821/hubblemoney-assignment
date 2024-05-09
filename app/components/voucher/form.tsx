@@ -1,7 +1,12 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { Brand, VoucherDataFromDB, VoucherFormState } from "@/types/app";
+import {
+  BrandNames,
+  FileType,
+  VoucherDataFromDB,
+  VoucherFormState,
+} from "@/types/app";
 import LabeledInput from "../shared/labeled-input";
 import LabeledTextarea from "../shared/labeled-textarea";
 import LabeledSelect from "../shared/labeled-select";
@@ -9,7 +14,7 @@ import { FileUploader } from "../shared/file-uploader";
 import {
   deleteFile,
   handleFormValidations,
-  uploadFiles,
+  uploadFile,
 } from "@/app/utils/file-handling";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
@@ -44,7 +49,7 @@ const voucherFormInitialState: VoucherFormState = {
 };
 
 interface FromProps {
-  brandNames: Brand[];
+  brandNames: BrandNames[];
   voucher?: VoucherDataFromDB;
   bannerUrl?: string;
 }
@@ -311,15 +316,18 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
             label={"Select a banner image file"}
             ownerLicense={[formData.bannerImage]}
             onUpload={(rawfiles) => {
-              const updatedFormData = uploadFiles(
-                rawfiles,
-                "voucherBanner",
+              const updatedFormData = uploadFile(
+                rawfiles[0],
+                FileType.VoucherBanner,
                 formData
               );
               setFormData(updatedFormData as VoucherFormState);
             }}
             onDelete={() => {
-              const updatedFormData = deleteFile("voucherBanner", formData);
+              const updatedFormData = deleteFile(
+                FileType.VoucherBanner,
+                formData
+              );
               setFormData(updatedFormData as VoucherFormState);
             }}
             count={1}
@@ -353,7 +361,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
             <option value='' disabled>
               Select a brand
             </option>
-            {brandNames?.map((brand: Brand) => (
+            {brandNames?.map((brand: BrandNames) => (
               <option value={brand.name} key={brand.id}>
                 {brand.name}
               </option>

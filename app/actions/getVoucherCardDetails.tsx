@@ -1,7 +1,7 @@
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 
-const getVoucherCounts = async (): Promise<{
+const getVoucherCardDetails = async (): Promise<{
   totalCount: number;
   activeCount: number;
   expiredCount: number;
@@ -48,4 +48,4 @@ const getVoucherCounts = async (): Promise<{
   };
 };
 
-export default getVoucherCounts;
+export default getVoucherCardDetails;

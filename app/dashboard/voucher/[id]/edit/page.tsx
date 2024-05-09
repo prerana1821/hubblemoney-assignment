@@ -10,15 +10,17 @@ import { Suspense } from "react";
 export default async function Page({ params }: { params: { id: string } }) {
   const id = params.id;
 
-  // TODO: promise all for first two
-  const brands = await getBrandNames();
-  const voucherDetails = await getVoucherDetailsById(id);
-  const bannerUrl = await getImage(voucherDetails.banner_path, "vouchers");
+  const [brands, voucherDetails] = await Promise.all([
+    getBrandNames(),
+    getVoucherDetailsById(id),
+  ]);
 
   if (!voucherDetails) {
     notFound();
   }
 
+  // Fetch the banner URL asynchronously
+  const bannerUrl = await getImage(voucherDetails.banner_path, "vouchers");
   return (
     <main>
       <Breadcrumbs

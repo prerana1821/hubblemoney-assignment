@@ -39,23 +39,22 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
   const getUserDetails = () => supabase.from("users").select("*").single();
 
   useEffect(() => {
-    if (user && !isLoadingData && !userDetails) {
-      setIsLoadingData(true);
+    const fetchUserDetails = async () => {
+      if (user && !isLoadingData && !userDetails) {
+        setIsLoadingData(true);
+        try {
+          const { data } = await getUserDetails();
+          setUserDetails(data as UserDetails);
+        } catch (error) {
+          console.error(error);
+        }
+        setIsLoadingData(false);
+      } else if (!user && !isLoadingUser && !isLoadingData) {
+        setUserDetails(null);
+      }
+    };
 
-      Promise.allSettled([getUserDetails()])
-        .then(([userDetailsPromise]) => {
-          if (userDetailsPromise.status === "fulfilled") {
-            setUserDetails(userDetailsPromise.value?.data as UserDetails);
-          } else {
-            console.error(userDetailsPromise.reason);
-          }
-
-          setIsLoadingData(false);
-        })
-        .catch((err) => console.error(err));
-    } else if (!user && !isLoadingUser && !isLoadingData) {
-      setUserDetails(null);
-    }
+    fetchUserDetails();
   }, [user, isLoadingUser]);
 
   const value = {

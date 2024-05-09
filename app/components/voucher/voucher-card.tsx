@@ -1,6 +1,5 @@
 import { formatDateToLocal } from "@/app/utils/string-manipulation";
-import useLoadImage from "@/hooks/useLoadImage";
-import { FAQ, VoucherDataFromDB, VoucherManagementData } from "@/types/app";
+import { VoucherDataFromDB } from "@/types/app";
 import Image from "next/image";
 import React from "react";
 

@@ -1,7 +1,6 @@
-import getVoucherCounts from "@/app/actions/getVoucherCounts";
+import getVoucherCounts from "@/app/actions/getVoucherCardDetails";
 import { Card } from "@/app/components/shared/count-card";
 import { CreateVoucher } from "@/app/components/voucher/buttons";
-import { Suspense } from "react";
 
 export default async function Page() {
   const cardData = await getVoucherCounts();

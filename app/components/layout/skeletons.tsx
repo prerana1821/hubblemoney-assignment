@@ -118,91 +118,36 @@ export function CardsSkeleton() {
 
 export function FormSkeleton() {
   return (
-    <form>
-      <div className={`${SHIMMER} rounded-md bg-gray-50 p-4 md:p-6`}>
-        <h3 className='text-2xl font-bold mb-4'>Brand Details: </h3>
+    <>
+      <div className={`${SHIMMER} rounded-md p-4 md:p-6`}>
         <div className='ml-4'>
-          <label htmlFor='logo' className='mb-2 block text-sm font-medium'>
-            Select a logo file
-          </label>
-          <div className='border-dashed border-[#e0e0e0] flex items-center justify-center mx-auto text-center border-2 rounded-md mt-4 py-5 mb-5'>
-            {/* File input section */}
-            <div className='flex-1 flex flex-col'>
-              <div className='mx-auto text-gray-400 mb-2'>{/* Icon */}</div>
-              <div className='text-[12px] font-normal text-gray-500'>
-                {/* File input */}
-                <span className='text-[#4070f4] cursor-pointer'>
-                  Click to upload
-                </span>{" "}
-                or drag and drop
-              </div>
-              <div className='text-[10px] font-normal text-gray-500'>
-                Only two files PNG, JPG or JPEG
-              </div>
-            </div>
-          </div>
-          {/* Brand Name input */}
+          <div className='h-4 bg-gray-200 rounded-full mb-2 w-40'></div>
+          <div className='h-20 bg-gray-200 rounded-md mb-5'></div>
           <div className='mb-4'>
             <div className='flex justify-between align-middle'>
-              <label htmlFor='name' className='mb-2 block text-sm font-medium'>
-                Brand Name
-              </label>
+              <div className='h-4 bg-gray-200 rounded-full mb-2 w-32'></div>
             </div>
-            <div className='relative rounded-md'>{/* Input */}</div>
+            <div className='h-10 bg-gray-200 rounded-md'></div>
           </div>
-          {/* Brand Description textarea */}
           <div className='mb-4'>
-            <label
-              htmlFor='description'
-              className='mb-2 block text-sm font-medium'
-            >
-              Brand Description
-            </label>
-            <div className='relative mt-2 rounded-md flex items-start'>
-              {/* Textarea */}
-            </div>
+            <div className='h-4 bg-gray-200 rounded-full mb-2 w-48'></div>
+            <div className='h-16 bg-gray-200 rounded-md flex items-start'></div>
           </div>
-          {/* Category select */}
           <div className='mb-4'>
-            <label
-              htmlFor='category'
-              className='mb-2 block text-sm font-medium'
-            >
-              Choose category
-            </label>
-            <div className='relative'>{/* Select */}</div>
+            <div className='h-4 bg-gray-200 rounded-full mb-2 w-40'></div>
+            <div className='h-10 bg-gray-200 rounded-md'></div>
           </div>
-          {/* Brand Status radio buttons */}
           <div className='mb-4'>
-            <fieldset>
-              <legend className='mb-2 block text-sm font-medium'>
-                Set the brand status
-              </legend>
-              <div className='rounded-md border border-gray-200 bg-white px-[14px] py-3'>
-                {/* Radio buttons */}
-              </div>
-            </fieldset>
+            <div className='h-4 bg-gray-200 rounded-full mb-2 w-48'></div>
+            <div className='h-12 bg-gray-200 rounded-md border border-gray-200 px-4 py-3'></div>
           </div>
         </div>
       </div>
-      {/* Form buttons */}
       <div className='mt-6 flex justify-end gap-4'>
-        {/* Cancel button */}
-        <a
-          className='flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200'
-          href='/dashboard/metadata'
-        >
-          Cancel
-        </a>
-        {/* Submit button */}
-        <button
-          type='submit'
-          className='flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50'
-        >
-          Add Brand Metadata
-        </button>
+        <div className='h-10 bg-gray-200 rounded-lg w-24'></div>
+        <div className='h-10 bg-gray-200 rounded-lg w-48'></div>
       </div>
-    </form>
+    </>
   );
 }
 
@@ -212,9 +157,9 @@ export function BrandCardSkeleton() {
       role='status'
       className='space-y-8 animate-pulse md:space-y-0 md:space-x-8 rtl:space-x-reverse md:flex md:items-center'
     >
-      <div className='flex items-center justify-center w-full h-48 bg-gray-300 rounded-full sm:w-96'>
+      <div className='flex items-center justify-center w-full h-48 bg-gray-300 sm:w-96'>
         <svg
-          className='w-10 h-10 text-gray-200 '
+          className='w-10 h-10 text-gray-200 rounded-full'
           aria-hidden='true'
           xmlns='http://www.w3.org/2000/svg'
           fill='currentColor'

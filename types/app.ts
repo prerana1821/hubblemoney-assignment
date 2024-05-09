@@ -1,11 +1,11 @@
-import { BRAND_STATUS, CATEGORIES } from "@/app/utils/constants";
+import { BRAND_STATUS, CATEGORIES, COLUMN_NAMES } from "@/app/utils/constants";
 export interface UserDetails {
   id: string;
   full_name?: string;
   avatar_url?: string;
 }
 
-export interface Brand {
+export interface BrandNames {
   id: string;
   name: string;
 }
@@ -59,7 +59,7 @@ export interface FilterFormData {
   expirationDate: string;
   discountPercentage: string;
   brandCategory: BrandCategory;
-  selectedColumns: string[];
+  selectedColumns: (typeof COLUMN_NAMES)[number][];
   tableRows: string;
 }
 
@@ -79,17 +79,6 @@ export interface TableData {
   highlights: string[];
   expirationDate: string;
   discountPercentage: string;
-}
-
-export interface MetadataItem {
-  brandId: string;
-  brandName: string;
-  brandLogoPath: string;
-  brandStatus: string;
-  brandCategory: string;
-  highlights: string[];
-  expirationDate: string[];
-  discountPercentage: number[];
 }
 
 export type BrandDataFromDB = Omit<BrandData, "logo"> & {
@@ -156,4 +145,13 @@ export interface FormValidationData {
 export interface ColumnItem {
   label: string;
   value: string;
+}
+
+export type StorageType = "brands" | "vouchers";
+
+export type FormState = BrandFormState | VoucherFormState;
+
+export enum FileType {
+  BrandLogo = "brandLogo",
+  VoucherBanner = "voucherBanner",
 }

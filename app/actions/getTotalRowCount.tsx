@@ -1,4 +1,4 @@
-import { Highlight, ServerSideFilters, TableData } from "@/types/app";
+import { ServerSideFilters } from "@/types/app";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 

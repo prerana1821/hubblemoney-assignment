@@ -27,6 +27,8 @@ export const TABLE_COLUMNS = [
   { label: "Discount %", value: "Voucher Discount" },
 ];
 
+export const COLUMN_NAMES = TABLE_COLUMNS.map((column) => column.value);
+
 export const BRAND_STATUS = ["Active", "Inactive"] as const;
 
 export const CARD_ICONS = {
@@ -38,3 +40,5 @@ export const CARD_ICONS = {
 
 export const SHIMMER =
   "before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent";
+
+export const ROW_OPTIONS = [5, 10, 20, 30, 40, 50];

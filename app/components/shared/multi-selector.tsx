@@ -79,10 +79,7 @@ const MultiSelectorChip: React.FC<MultiSelectorChipProps> = ({
                   <div
                     className='cursor-pointer'
                     onMouseDown={(e) => e.preventDefault()}
-                    onClick={() =>
-                      // setSelected(selected.filter((i) => i !== tag))
-                      removeTag(tag)
-                    }
+                    onClick={() => removeTag(tag)}
                   >
                     <IoRemoveCircleOutline />
                   </div>
@@ -103,7 +100,6 @@ const MultiSelectorChip: React.FC<MultiSelectorChipProps> = ({
           </div>
         ) : null}
 
-        {/* Menu's */}
         {menuOpen ? (
           <div className='origin-top-right absolute right-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10'>
             <ul className='w-full'>

@@ -1,72 +1,48 @@
-import { BrandFormState, ImageFileData, VoucherFormState } from "@/types/app";
+import {
+  BrandFormState,
+  FileType,
+  FormState,
+  ImageFileData,
+  VoucherFormState,
+} from "@/types/app";
 import { Dispatch, SetStateAction } from "react";
 import { isDate } from "./string-manipulation";
 
-type FormState = BrandFormState | VoucherFormState;
-
-export const uploadFiles = (
-  files: ImageFileData[],
-  type: "brandLogo" | "voucherBanner",
+export const uploadFile = (
+  file: ImageFileData,
+  type: FileType,
   formData: FormState
-) => {
+): FormState => {
   const updatedFormData = { ...formData };
+  const field = type === FileType.BrandLogo ? "logo" : "bannerImage";
 
-  files.forEach((file, index) => {
-    if (index === 0) {
-      if ("logo" in updatedFormData && type === "brandLogo") {
-        updatedFormData.logo = {
-          name: file.name,
-          photo: file.photo,
-          type: file.type,
-          size: file.size,
-          file: file.file,
-          path: "",
-          error: null,
-        };
-      } else if ("bannerImage" in updatedFormData && type === "voucherBanner") {
-        updatedFormData.bannerImage = {
-          name: file.name,
-          photo: file.photo,
-          type: file.type,
-          size: file.size,
-          file: file.file,
-          path: "",
-          error: null,
-        };
-      }
-    }
-  });
+  (updatedFormData as any)[field] = {
+    name: file.name,
+    photo: file.photo,
+    type: file.type,
+    size: file.size,
+    file: file.file,
+    path: "",
+    error: null,
+  };
 
   return updatedFormData;
 };
 
-export const deleteFile = (
-  type: "brandLogo" | "voucherBanner",
-  formData: FormState
-) => {
+export const deleteFile = (type: FileType, formData: FormState): FormState => {
   const updatedFormData = { ...formData };
+  const field = type === FileType.BrandLogo ? "logo" : "bannerImage";
 
-  if ("logo" in updatedFormData && type === "brandLogo") {
-    updatedFormData.logo = {
-      name: "",
-      photo: "",
-      type: "",
-      size: 0,
-      file: null,
-      path: "",
-      error: null,
-    };
-  } else if ("bannerImage" in updatedFormData && type === "voucherBanner") {
-    updatedFormData.bannerImage = {
-      name: "",
-      photo: "",
-      type: "",
-      size: 0,
-      file: null,
-      path: "",
-      error: null,
-    };
-  }
+  (updatedFormData as any)[field] = {
+    name: "",
+    photo: "",
+    type: "",
+    size: 0,
+    file: null,
+    path: "",
+    error: null,
+  };
+
   return updatedFormData;
 };
 

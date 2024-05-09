@@ -49,9 +49,7 @@ const LabeledRadio = forwardRef<HTMLInputElement, LabeledRadioProps>(
         </fieldset>
         {error && (
           <div id={`${props.id}-error`} aria-live='polite' aria-atomic='true'>
-            {/* {error.map((errorMsg: string, index: number) => ( */}
             <p className='mt-2 text-sm text-red-500'>{error}</p>
-            {/* ))} */}
           </div>
         )}
       </div>

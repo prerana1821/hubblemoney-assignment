@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { BrandDataFromDB, BrandFormState } from "@/types/app";
+import { BrandDataFromDB, BrandFormState, FileType } from "@/types/app";
 import LabeledInput from "../shared/labeled-input";
 import LabeledTextarea from "../shared/labeled-textarea";
 import LabeledSelect from "../shared/labeled-select";
@@ -11,7 +11,7 @@ import { Button } from "../shared/button";
 import {
   deleteFile,
   handleFormValidations,
-  uploadFiles,
+  uploadFile,
 } from "@/app/utils/file-handling";
 import { BRAND_STATUS, CATEGORIES } from "@/app/utils/constants";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -185,15 +185,15 @@ export default function Form({
             label={"Select a logo file"}
             ownerLicense={[formData.logo]}
             onUpload={(rawfiles) => {
-              const updatedFormData = uploadFiles(
-                rawfiles,
-                "brandLogo",
+              const updatedFormData = uploadFile(
+                rawfiles[0],
+                FileType.BrandLogo,
                 formData
               );
               setFormData(updatedFormData as BrandFormState);
             }}
             onDelete={() => {
-              const updatedFormData = deleteFile("brandLogo", formData);
+              const updatedFormData = deleteFile(FileType.BrandLogo, formData);
               setFormData(updatedFormData as BrandFormState);
             }}
             count={1}

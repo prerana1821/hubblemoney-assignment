@@ -25,9 +25,9 @@ const getFilteredMetadata = async (filters: ServerSideFilters) => {
   try {
     let voucherQuery = supabase
       .from("vouchers")
-      .select("id, brand_id, highlights, expiration_date, discount_percentage")
-      .range(offset, offset + limit - 1)
-      .order("created_at", { ascending: false });
+      .select("id, brand_id, highlights, expiration_date, discount_percentage");
+    // .range(offset, offset + limit - 1)
+    // .order("created_at", { ascending: false });
 
     if (expirationDate) {
       voucherQuery.lte("expiration_date", expirationDate);
@@ -82,17 +82,18 @@ const getFilteredMetadata = async (filters: ServerSideFilters) => {
         (voucher) => voucher.brand_id === brand.id
       );
 
+      const emptyVoucherBrand: TableData = {
+        brandId: brand.id,
+        brandName: brand.name,
+        brandLogoPath: brand.logo_path,
+        brandStatus: brand.status,
+        brandCategory: brand.category,
+        highlights: [],
+        expirationDate: "",
+        discountPercentage: "",
+      };
+
       if (foundVouchers.length === 0) {
-        const emptyVoucherBrand: TableData = {
-          brandId: brand.id,
-          brandName: brand.name,
-          brandLogoPath: brand.logo_path,
-          brandStatus: brand.status,
-          brandCategory: brand.category,
-          highlights: [],
-          expirationDate: "",
-          discountPercentage: "",
-        };
         return [emptyVoucherBrand];
       } else {
         return foundVouchers.map((foundVoucher) => {
@@ -107,11 +108,7 @@ const getFilteredMetadata = async (filters: ServerSideFilters) => {
           }
 
           return {
-            brandId: brand.id,
-            brandName: brand.name,
-            brandLogoPath: brand.logo_path,
-            brandStatus: brand.status,
-            brandCategory: brand.category,
+            ...emptyVoucherBrand,
             voucherId: foundVoucher.id,
             highlights: parsedHighlight,
             expirationDate: foundVoucher.expiration_date || "",
@@ -121,7 +118,9 @@ const getFilteredMetadata = async (filters: ServerSideFilters) => {
       }
     });
 
-    return tableData;
+    const orderedAndLimitedBrands = tableData.slice(offset, offset + limit);
+
+    return orderedAndLimitedBrands;
   } catch (error) {
     console.error("Supabase Error:", error);
     throw new Error("Failed to fetch data.");

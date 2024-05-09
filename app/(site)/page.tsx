@@ -1,4 +1,3 @@
-import Link from "next/link";
 import Image from "next/image";
 import Footer from "@/app/components/layout/footer";
 import NavigateToDashboard from "@/app/components/login/buttons";

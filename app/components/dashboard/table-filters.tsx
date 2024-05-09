@@ -1,37 +1,41 @@
 "use client";
 
-import React, { ChangeEvent, useEffect, useState } from "react";
-import CheckboxList from "../shared/checkbox-list";
-import LabeledInput from "../shared/labeled-input";
-import LabeledSelect from "../shared/labeled-select";
-import MultiSelectorChip from "../shared/multi-selector";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import queryString from "query-string";
-import { ColumnItem, FilterFormData } from "@/types/app";
+import CheckboxList from "@/app/components/shared/checkbox-list";
+import LabeledInput from "@/app/components/shared/labeled-input";
+import LabeledSelect from "@/app/components/shared/labeled-select";
+import MultiSelectorChip from "@/app/components/shared/multi-selector";
 import useDebounce from "@/hooks/useDebounce";
-import { BRAND_STATUS, TABLE_COLUMNS } from "@/app/utils/constants";
+import {
+  BRAND_STATUS,
+  ROW_OPTIONS,
+  TABLE_COLUMNS,
+} from "@/app/utils/constants";
+import {
+  clearInputValue,
+  filterFormInitialState,
+  handleCheckboxChange,
+  handleInputChange,
+  handleQueryChange,
+  handleRemoveTagChange,
+  handleSelectedChange,
+  handleQueryParam,
+} from "@/app/utils/filters-form-handling";
 import { GrStatusGood } from "react-icons/gr";
 import { CiCalendarDate, CiDiscount1 } from "react-icons/ci";
-import { MdOutlinePersonOutline, MdOutlineTableRows } from "react-icons/md";
+import { MdOutlinePersonOutline } from "react-icons/md";
 import { BsListColumnsReverse } from "react-icons/bs";
+import { FilterFormData } from "@/types/app";
+import queryString from "query-string";
 
 const TableFilters = () => {
   const pathname = usePathname();
   const { replace } = useRouter();
   const searchParams = useSearchParams();
-  const [formData, setFormData] = useState<FilterFormData>({
-    currentPage: 1,
-    brandName: "",
-    brandCategory: {
-      query: "",
-      selected: [],
-    },
-    brandStatus: "",
-    expirationDate: "",
-    discountPercentage: "",
-    selectedColumns: TABLE_COLUMNS.map((column) => column.value),
-    tableRows: "10",
-  });
+  const [formData, setFormData] = useState<FilterFormData>(
+    filterFormInitialState
+  );
 
   const debouncedValue = useDebounce({
     value: formData.brandName,
@@ -40,13 +44,15 @@ const TableFilters = () => {
 
   useEffect(() => {
     const { currentPage, ...formDataWithoutPage } = formData;
+    const brandName = formData.brandName.length === 0 ? "" : debouncedValue;
+    const brandCategory = formData.brandCategory.selected;
     const queryParams = queryString.stringify(
       {
         ...formDataWithoutPage,
-        brandName: formData.brandName.length === 0 ? "" : debouncedValue,
-        brandCategory: formData.brandCategory.selected,
+        brandName,
+        brandCategory,
         brandStatus: formData.brandStatus,
-        page: formData.currentPage,
+        page: currentPage,
       },
       {
         skipEmptyString: true,
@@ -57,163 +63,23 @@ const TableFilters = () => {
   }, [debouncedValue, formData, pathname, replace, formData.brandName]);
 
   useEffect(() => {
-    const currentPageFromParams = searchParams.get("page");
-    if (
-      currentPageFromParams !== null &&
-      !isNaN(parseInt(currentPageFromParams))
-    ) {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        currentPage: parseInt(currentPageFromParams),
-      }));
-    } else {
-      setFormData((prevFormData) => ({ ...prevFormData, currentPage: 1 }));
-    }
-
-    const brandNameFromParams = searchParams.get("brandName");
-    if (brandNameFromParams !== null) {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        brandName: brandNameFromParams,
-      }));
-    }
-
-    if (searchParams.get("brandCategory")) {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        brandCategory: {
-          ...prevFormData.brandCategory,
-          selected: searchParams.getAll("brandCategory"),
-        },
-      }));
-    }
-
-    const brandStatusFromParams = searchParams.get("brandStatus");
-    if (brandStatusFromParams !== null) {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        brandStatus: brandStatusFromParams,
-      }));
-    }
-
-    const expirationDateFromParams = searchParams.get("expirationDate");
-    if (expirationDateFromParams !== null) {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        expirationDate: expirationDateFromParams,
-      }));
-    }
-
-    const discountPercentageFromParams = searchParams.get("discountPercentage");
-    if (discountPercentageFromParams !== null) {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        discountPercentage: discountPercentageFromParams,
-      }));
-    }
-
-    const tableRowsFromParams = searchParams.get("tableRows");
-    if (tableRowsFromParams !== null) {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        tableRows: tableRowsFromParams,
-      }));
-    }
-
-    if (searchParams.get("selectedColumns")) {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        selectedColumns: searchParams.getAll("selectedColumns"),
-      }));
-    }
+    searchParams.forEach((value, key) =>
+      handleQueryParam(key, value, searchParams, setFormData)
+    );
   }, [searchParams]);
-
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  };
-
-  const clearInputValue = (name: string) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: "",
-    }));
-  };
-
-  const handleCheckboxChange = (value: ColumnItem) => {
-    setFormData((prevFormData) => {
-      const selectedValue = prevFormData.selectedColumns.find(
-        (column) => column === value.value
-      );
-
-      const updatedSelectedColumns = selectedValue
-        ? prevFormData.selectedColumns.filter(
-            (column) => column !== value.value
-          )
-        : [...prevFormData.selectedColumns, value.value];
-
-      return {
-        ...prevFormData,
-        selectedColumns: updatedSelectedColumns,
-      };
-    });
-  };
-
-  const handleQueryChange = (newQuery: string) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      brandCategory: {
-        ...prevFormData.brandCategory,
-        query: newQuery,
-      },
-    }));
-  };
-
-  const handleSelectedChange = (newSelected: string) => {
-    if (newSelected === "clear-all") {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        brandCategory: {
-          ...prevFormData.brandCategory,
-          selected: [],
-        },
-      }));
-    } else {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        brandCategory: {
-          ...prevFormData.brandCategory,
-          selected: [...prevFormData.brandCategory.selected, newSelected],
-        },
-      }));
-    }
-  };
-
-  const handleRemoveTagChange = (tagToRemove: string) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      brandCategory: {
-        ...prevFormData.brandCategory,
-        selected: prevFormData.brandCategory.selected.filter(
-          (tag) => tag !== tagToRemove
-        ),
-      },
-    }));
-  };
 
   return (
     <>
       <MultiSelectorChip
         query={formData.brandCategory.query}
         selected={formData.brandCategory?.selected}
-        setQuery={handleQueryChange}
-        setSelected={handleSelectedChange}
-        removeTag={handleRemoveTagChange}
+        setQuery={(newQuery) => handleQueryChange(newQuery, setFormData)}
+        setSelected={(newSelected) =>
+          handleSelectedChange(newSelected, setFormData)
+        }
+        removeTag={(tagToRemove) =>
+          handleRemoveTagChange(tagToRemove, setFormData)
+        }
       />
       <div className='flex flex-row justify-between align-middle mt-4'>
         <LabeledInput
@@ -222,7 +88,7 @@ const TableFilters = () => {
           label={"Search by brand name"}
           name='brandName'
           value={formData.brandName}
-          onChange={handleInputChange}
+          onChange={(e) => handleInputChange(e, setFormData)}
           required={true}
           placeholder='Brand Name'
           icon={MdOutlinePersonOutline}
@@ -234,7 +100,7 @@ const TableFilters = () => {
           name='brandStatus'
           className='block w-full rounded-md border-gray-300'
           value={formData.brandStatus}
-          onChange={handleInputChange}
+          onChange={(e) => handleInputChange(e, setFormData)}
           icon={GrStatusGood}
         >
           <option value='' disabled>
@@ -251,10 +117,10 @@ const TableFilters = () => {
           id='expirationDate'
           type='datetime-local'
           label={"Minimum Voucher Expiry:"}
-          clearInputValue={clearInputValue}
+          clearInputValue={(name) => clearInputValue(name, setFormData)}
           name='expirationDate'
           value={formData.expirationDate}
-          onChange={handleInputChange}
+          onChange={(e) => handleInputChange(e, setFormData)}
           className='block w-full rounded-md border-gray-300'
           icon={CiCalendarDate}
         />
@@ -264,7 +130,7 @@ const TableFilters = () => {
           label={"Minimum Discount %"}
           name='discountPercentage'
           value={formData.discountPercentage}
-          onChange={handleInputChange}
+          onChange={(e) => handleInputChange(e, setFormData)}
           placeholder='Discount Percentage'
           icon={CiDiscount1}
           className='block w-full rounded-md border-gray-300'
@@ -272,21 +138,23 @@ const TableFilters = () => {
         <CheckboxList
           items={TABLE_COLUMNS}
           checkedItems={formData.selectedColumns}
-          onCheckboxChange={handleCheckboxChange}
+          onCheckboxChange={(value) => handleCheckboxChange(value, setFormData)}
         />
         <LabeledSelect
           id='tableRows'
           label='Rows per page'
           name='tableRows'
           value={formData.tableRows}
-          onChange={handleInputChange}
+          onChange={(e) => handleInputChange(e, setFormData)}
           icon={BsListColumnsReverse}
         >
-          <option value='10'>10</option>
-          <option value='20'>20</option>
-          <option value='30'>30</option>
-          <option value='40'>40</option>
-          <option value='50'>50</option>
+          {ROW_OPTIONS.map((option) => {
+            return (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            );
+          })}
         </LabeledSelect>
       </div>
     </>
