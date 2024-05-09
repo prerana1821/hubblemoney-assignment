@@ -6,7 +6,7 @@
   <h3 align="center">Hubble Money Dashboard</h3>
 
   <p align="center">
-      Transforming Shopping Experience: Discount, Save, Invest!
+      Transforming Shopping Experience: Get discounts, Save, Invest!
     <br />
     <a href="https://hubblemoney-assignment.vercel.app/"><strong>Go to App »</strong></a>
     <br />
@@ -20,29 +20,41 @@
 </div>
 
 <p align="center">
-Welcome to the Brand Metadata and Voucher Management Dashboard! This dashboard provides a comprehensive solution for managing brand metadata and vouchers, facilitating efficient organization and manipulation of essential data.
+Welcome to the Brand Metadata and Voucher Management Dashboard! This dashboard provides a comprehensive solution for managing brand metadata and vouchers, facilitating efficient organization and manipulation of essential data. Elevate your brand management game with our all-in-one solution, streamlining metadata and voucher handling for effortless organization and optimization of vital information.
 </p>
 
 ## Demo
 
 ## Features
 
-- **Search by Brand Name**: Quickly search for brands using their name.
-- **Filters**:
-  - Brand Category: Multi-select option with search functionality to filter brands by category.
-  - Brand Status: Dropdown menu to filter brands by status (active, inactive, etc.).
-  - Voucher Minimum Expiration Date: Input field to specify the minimum expiration date for vouchers.
-  - Voucher Minimum Discount Percentage: Input field to specify the minimum discount percentage for vouchers.
-  - Toggle Columns: Checkbox list to toggle visibility of columns in the table view, excluding the brand name.
-  - Rows per Page: Dropdown menu to select the number of rows to display per page.
-- **Pagination**: Navigate through multiple pages of brands and vouchers.
-- **URL-Based Filtering**: Utilize URL parameters to apply specific filters and configurations.
+- **Dashboard**:
+
+  - **Brand Name Search**: Effortlessly locate brands by their name using the search feature.
+  - **Brand Category Selection**: Utilize a multi-select option with integrated search functionality to filter brands by category.
+  - **Brand Status Filtering**: Easily filter brands based on their status (active, inactive, etc.) using a dropdown menu.
+  - **Minimum Voucher Expiration Date**: Define the minimum expiration date for vouchers with a convenient input field.
+  - **Minimum Voucher Discount Percentage**: Set the minimum discount percentage for vouchers using a dedicated input field.
+  - **Column Visibility Toggle**: Customize your table view by toggling the visibility of columns, excluding the brand name, with a checkbox list.
+  - **Rows per Page Control**: Tailor your viewing experience by selecting the desired number of rows to display per page from a dropdown menu.
+  - **Pagination**: Seamlessly navigate through multiple pages of brands and vouchers for enhanced usability.
+  - **URL-Based Filtering**: Leverage URL parameters to effortlessly apply specific filters and configurations, ensuring a personalized experience.
+
 - **Brand Management**:
-  - View, create, update, and delete brands easily.
+
+  - **View**: Gain insights into brand details and imagery effortlessly.
+  - **Create**: Introduce new brands into the system with ease, including image upload functionality.
+  - **Update**: Modify existing brand information seamlessly, including logo updates.
+  - **Delete**: Remove brands from the database effortlessly, ensuring data cleanliness.
+
 - **Voucher Management**:
-  - View, create, update, and delete brand vouchers easily.
+
+  - **View**: Explore voucher details and associated imagery effortlessly.
+  - **Create**: Generate new vouchers effortlessly, complete with image upload capabilities.
+  - **Update**: Modify existing voucher details seamlessly, including banner updates.
+  - **Delete**: Remove vouchers from the database with ease, maintaining data integrity.
+
 - **Data Insights**:
-  - View data metrics such as total brands, active/inactive brands, total vouchers, expired vouchers, etc.
+  - **Metrics Overview**: Access key metrics such as total brands, active/inactive brands, total vouchers, expired vouchers, and more for comprehensive data insights.
 
 ## Getting Started
 
