@@ -1,109 +1,122 @@
-## Todo
+<div align="center">
+  <a href="https://github.com/prerana1821/hubblemoney-assignment">
+    <img src="/public/logo.png" alt="Logo" width="80" height="80">
+  </a>
 
-<!-- - brand categories should come from database -->
-<!-- - error handling form -->
-<!-- - login or dashboard on site page -->
-<!-- - if a brand is deleted, delete the logo as well from storage and associated banners as well -->
+  <h3 align="center">Hubble Money Dashboard</h3>
 
-<!-- - card analytics for metadata and vouchers -->
+  <p align="center">
+      Transforming Shopping Experience: Discount, Save, Invest!
+    <br />
+    <a href="https://hubblemoney-assignment.vercel.app/"><strong>Go to App »</strong></a>
+    <br />
+    <br />
+    <a href="https://github.com/prerana1821/hubblemoney-assignment/pulls">Raise a PR</a>
+    ·
+    <a href="https://github.com/prerana1821/hubblemoney-assignment/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/prerana1821/hubblemoney-assignment/issues">Request Feature</a>
+  </p>
+</div>
 
-<!-- - take all the breadcrumbs to constants -->
-<!-- - css -->
-  <!-- - onhover hightlights -->
-  <!-- - view details -->
-  <!-- - Add remove highlight & FAQ -->
+<p align="center">
+Welcome to the Brand Metadata and Voucher Management Dashboard! This dashboard provides a comprehensive solution for managing brand metadata and vouchers, facilitating efficient organization and manipulation of essential data.
+</p>
 
-<!-- - pagination -->
+## Demo
 
-## Good to have
+## Features
 
-- testing
-- JSON to form
+- **Search by Brand Name**: Quickly search for brands using their name.
+- **Filters**:
+  - Brand Category: Multi-select option with search functionality to filter brands by category.
+  - Brand Status: Dropdown menu to filter brands by status (active, inactive, etc.).
+  - Voucher Minimum Expiration Date: Input field to specify the minimum expiration date for vouchers.
+  - Voucher Minimum Discount Percentage: Input field to specify the minimum discount percentage for vouchers.
+  - Toggle Columns: Checkbox list to toggle visibility of columns in the table view, excluding the brand name.
+  - Rows per Page: Dropdown menu to select the number of rows to display per page.
+- **Pagination**: Navigate through multiple pages of brands and vouchers.
+- **URL-Based Filtering**: Utilize URL parameters to apply specific filters and configurations.
+- **Brand Management**:
+  - View, create, update, and delete brands easily.
+- **Voucher Management**:
+  - View, create, update, and delete brand vouchers easily.
+- **Data Insights**:
+  - View data metrics such as total brands, active/inactive brands, total vouchers, expired vouchers, etc.
 
-## Data
+## Getting Started
 
-brand:
+Follow these steps to set up and run the Brand Metadata and Voucher Management Dashboard locally:
 
-- logo
-- name
-- description
-- category
-- status (active/inactive)
+1. **Clone the Repository**:
 
-voucher management:
+   ```
+   git clone https://github.com/prerana1821/hubblemoney-assignment.git
+   ```
 
-- banner image
-- FAQs
-  - array of question and answer
-- highlights
-  - description
-  - array of title and text
+2. **Navigate to the Project Directory**:
 
-search:
+   ```
+   cd brand-hubblemoney-assignment
+   ```
 
-- brand name: input text
+3. **Install Dependencies**:
 
-filters:
+   ```
+   npm install
+   ```
 
-- brand category: multi select with search
-- brand status (active/inactive/verified): select
-- voucher min expiration date: date number
-- voucher min discount percentage: input number
-- Toggle columns: checkboxlist - !brandname
-- Rows per page: select
+4. **Set Environment Variables**:
+   Create a `.env` file in the root directory and define the following environment variables:
 
-pagination
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=<your-api-base-url>
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-api-anon-key>
+   SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>
+   ```
 
-table representation:
+5. **Start the Development Server**:
 
-- Brand Logo & Name
-- Brand Category
-- Brand Status
-- Voucher Highlight - Titles
-- Voucher Expiration Date
-- Voucher Discount Percentage
+   ```
+   npm start
+   ```
 
-## supabase tables
+6. **Access the Dashboard**:
+   Open your web browser and go to `http://localhost:3000` to access the dashboard.
 
-1. Brands Table:
+## Built With
 
-   Columns:
+- [Next.js 14](https://nextjs.org/)
+- [React](https://reactjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Supabase](https://supabase.io/)
+- [PostgreSQL](https://www.postgresql.org/)
 
-   - id: primary key
-   - name: text
-   - description: text
-   - category: text (groceries, fashion, beauty, travel)
-   - logo_path: text
-   - status: text (active/inactive/verified)
+## Supabase Table Details
 
-2. Vouchers Table:
+### Brands Table
 
-   Columns:
-   id: primary key
-   brand_id: foreign key
-   banner_path: text
-   discount_percentage: number
-   expiration_date: timestamp
-   faq: json (array of objects - question and answer)
-   highlights: json (array of objects - title and text)
+| Parameter     | Type          | Description                                                       |
+| :------------ | :------------ | :---------------------------------------------------------------- |
+| `id`          | `Primary Key` | Unique identifier for the brand.                                  |
+| `name`        | `Text`        | Name of the brand.                                                |
+| `description` | `Text`        | Description of the brand.                                         |
+| `category`    | `Text`        | Category of the brand (e.g., Groceries, Fashion, Beauty, Travel). |
+| `logo_path`   | `Text`        | Path to the logo image of the brand.                              |
+| `status`      | `Text`        | Status of the brand (e.g., Active, Inactive, Verified).           |
 
-## form
+### Vouchers Table
 
-1. brand:
+| Parameter             | Type          | Description                                                             |
+| :-------------------- | :------------ | :---------------------------------------------------------------------- |
+| `id`                  | `Primary Key` | Unique identifier for the voucher.                                      |
+| `brand_id`            | `Foreign Key` | Identifier linking the voucher to its respective brand.                 |
+| `banner_path`         | `Text`        | Path to the banner image of the voucher.                                |
+| `discount_percentage` | `Number`      | Percentage discount offered by the voucher.                             |
+| `expiration_date`     | `Timestamp`   | Expiration date of the voucher.                                         |
+| `faq`                 | `JSON`        | Array of objects containing FAQs related to the voucher.                |
+| `highlights`          | `JSON`        | Array of objects containing highlights (title and text) of the voucher. |
 
-- logo: file input
-- name: text input
-- description: textarea
-- category: select (groceries, fashion, beauty, travel)
-- status: radio button input of active/inactive/verified
+## Feedback
 
-2. voucher management:
-
-- brand name: should be a select and the select should also contain the brand name which is added in the first section
-- banner image: file input
-- discount_percentage: number
-- expiration_date: timestamp
-- FAQs: text input for question and textarea for answer with add FAQ button to dynamically add text input for question and textarea for answer
-- highlights
-  - description: textarea
-  - title and text: text input for title and textarea for text with add highlight button to dynamically add text input for title and textarea for text
+If you have any questions, suggestions, or feedback, please don't hesitate to reach out to us at [prerananw1@gmail.com](mailto:prerananw1@gmail.com).
