@@ -5,6 +5,7 @@ import { BrandLogo } from "./brand-logo";
 import { formatDateToLocal } from "@/app/utils/string-manipulation";
 import Dropdown from "../shared/dropdown";
 import Pagination from "./pagination";
+import HighlightModal from "./highlight-modal";
 
 export default async function DataTable({
   filters,
@@ -63,9 +64,7 @@ export default async function DataTable({
                   )}
                   {(filters.selectedColumns.length === 0 ||
                     filters.selectedColumns.includes("Voucher Highlights")) && (
-                    <td className='px-3 py-3 truncate max-w-40'>
-                      {data.highlights.join(", ")}
-                    </td>
+                    <HighlightModal highlights={data.highlights} />
                   )}
                   {(filters.selectedColumns.length === 0 ||
                     filters.selectedColumns.includes(

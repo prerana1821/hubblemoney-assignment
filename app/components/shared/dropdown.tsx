@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import React, { FC, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { FaEllipsis } from "react-icons/fa6";
+import MetadataDetailsModal from "../dashboard/metadata-modal";
 
 interface DropdownProps {
   brandId: string;
@@ -17,6 +18,7 @@ const Dropdown: FC<DropdownProps> = ({ brandId, voucherId }) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [showMetadataModal, setShowMetadataModal] = useState(false);
   const { supabaseClient } = useSessionContext();
 
   useOutsideClick(dropdownRef, () => setOpen(false));
@@ -45,17 +47,14 @@ const Dropdown: FC<DropdownProps> = ({ brandId, voucherId }) => {
         <div className='hs-dropdown-menu absolute right-1 transition-[opacity,margin] duration  min-w-40 bg-white shadow-md rounded-lg p-2 mt-2 divide-y divide-gray-200 z-50'>
           <div className='py-2 first:pt-0 last:pb-0'>
             <span className='block py-2 px-3 text-xs font-medium uppercase text-gray-400'>
-              View
+              Brand
             </span>
             <Link
               href={`/dashboard/metadata/${brandId}`}
               className='flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100'
             >
-              Metadata Details
+              View
             </Link>
-            <span className='block py-2 px-3 text-xs font-medium uppercase text-gray-400'>
-              Brand
-            </span>
             <Link
               href={`/dashboard/metadata/${brandId}/edit`}
               className='flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100'
@@ -74,6 +73,12 @@ const Dropdown: FC<DropdownProps> = ({ brandId, voucherId }) => {
               <span className='block py-2 px-3 text-xs font-medium uppercase text-gray-400'>
                 Voucher
               </span>
+              <Link
+                href={`/dashboard/voucher/${voucherId}`}
+                className='flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100'
+              >
+                View
+              </Link>
               <Link
                 className='flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100'
                 href={`/dashboard/voucher/${voucherId}/edit`}
@@ -104,6 +109,12 @@ const Dropdown: FC<DropdownProps> = ({ brandId, voucherId }) => {
             </div>
           )}
         </div>
+      )}
+      {showMetadataModal && (
+        <MetadataDetailsModal
+          brandId={brandId}
+          onClose={() => setShowMetadataModal(false)}
+        />
       )}
     </div>
   );

@@ -7,11 +7,11 @@
 
 - card analytics for metadata and vouchers
 - take all the breadcrumbs to constants
-- onhover hightlights
-- view details
 - css
+  <!-- - onhover hightlights -->
+  <!-- - view details -->
+  <!-- - Add remove highlight & FAQ -->
 - pagination
-- Add remove highlight & FAQ
 
 ## Good to have
 

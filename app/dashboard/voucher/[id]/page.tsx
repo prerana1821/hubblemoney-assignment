@@ -1,18 +1,20 @@
-import getBrandDetailsById from "@/app/actions/getBrandDetailsById";
 import getImage from "@/app/actions/getImage";
+import getVoucherDetailsById from "@/app/actions/getVoucherDetailsById";
 import Breadcrumbs from "@/app/components/layout/breadcrumbs";
+import VoucherCard from "@/app/components/voucher/voucher-card";
 import { notFound } from "next/navigation";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const id = params.id;
 
-  // const brandDetails = await getBrandDetailsById(id);
-  // const logoUrl = await getImage(brandDetails.logo_path, "brands");
-  // //   const bannerURL = await getImage(brandDetails.logo_path, "brands");
+  const voucherDetails = await getVoucherDetailsById(id);
+  const bannerUrl = await getImage(voucherDetails.banner_path, "vouchers");
 
-  // if (!brandDetails) {
-  //   notFound();
-  // }
+  if (!voucherDetails) {
+    notFound();
+  }
+
+  console.log({ voucherDetails });
 
   return (
     <main>
@@ -26,6 +28,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           },
         ]}
       />
+      <VoucherCard voucher={{ ...voucherDetails, banner_path: bannerUrl }} />;
     </main>
   );
 }

@@ -1,6 +1,7 @@
 import getBrandDetailsById from "@/app/actions/getBrandDetailsById";
 import getImage from "@/app/actions/getImage";
 import Breadcrumbs from "@/app/components/layout/breadcrumbs";
+import BrandCard from "@/app/components/metadata/brand-card";
 import { notFound } from "next/navigation";
 
 export default async function Page({ params }: { params: { id: string } }) {
@@ -8,7 +9,6 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   const brandDetails = await getBrandDetailsById(id);
   const logoUrl = await getImage(brandDetails.logo_path, "brands");
-  //   const bannerURL = await getImage(brandDetails.logo_path, "brands");
 
   if (!brandDetails) {
     notFound();
@@ -26,6 +26,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           },
         ]}
       />
+      <BrandCard brand={brandDetails} imagePath={logoUrl} />
     </main>
   );
 }

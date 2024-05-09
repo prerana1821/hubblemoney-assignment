@@ -18,6 +18,7 @@ import Link from "next/link";
 import { Button } from "../shared/button";
 import toast from "react-hot-toast";
 import { formatToSupabaseDate } from "@/app/utils/string-manipulation";
+import { FiDelete } from "react-icons/fi";
 
 const voucherFormInitialState: VoucherFormState = {
   brandName: { value: "", error: null },
@@ -41,8 +42,6 @@ interface FromProps {
   voucher?: VoucherDataFromDB;
   bannerUrl?: string;
 }
-
-// TODO: Add remove highlight & FAQ
 
 export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
   const [isLoading, setIsLoading] = useState(false);
@@ -145,6 +144,26 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
         ...formData.highlights,
         { title: "", text: "", error: null },
       ],
+    });
+  };
+
+  const removeHighlight = (indexToRemove: number) => {
+    const updatedHighlights = formData.highlights.filter(
+      (_, index) => index !== indexToRemove
+    );
+    setFormData({
+      ...formData,
+      highlights: updatedHighlights,
+    });
+  };
+
+  const removeFAQ = (indexToRemove: number) => {
+    const updatedFAQs = formData.FAQs.filter(
+      (_, index) => index !== indexToRemove
+    );
+    setFormData({
+      ...formData,
+      FAQs: updatedFAQs,
     });
   };
 
@@ -269,7 +288,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
         }
       }
 
-      router.refresh();
+      router.push("/dashboard");
       setIsLoading(false);
       setFormData({
         ...voucherFormInitialState,
@@ -355,56 +374,8 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
             placeholder='Expiration Date:'
             error={formData.expirationDate.error}
           />
-          <div className='mb-4'>
-            <div className='flex flex-row justify-between align-middle'>
-              <h3 className='text-lg font-semibold mb-2'>FAQs</h3>{" "}
-              <button
-                type='button'
-                onClick={addFAQ}
-                className='bg-blue-500 text-white py-2 px-4 rounded'
-              >
-                Add FAQ
-              </button>
-            </div>
-            {formData.FAQs.map((faq, index) => (
-              <div key={index} className='mb-2'>
-                <LabeledInput
-                  id='faq-question-index'
-                  disabled={isLoading}
-                  type='text'
-                  label={"Question"}
-                  name='question'
-                  value={faq.question}
-                  className='mt-1 block w-full rounded-md border-gray-300'
-                  onChange={(e) => handleFAQChange(index, e)}
-                  required={true}
-                  placeholder='Question'
-                  min={5}
-                />
-                <LabeledTextarea
-                  id='faq-answer'
-                  rows={4}
-                  placeholder='Write the answer here...'
-                  label='Answer: '
-                  name='answer'
-                  minLength={5}
-                  disabled={isLoading}
-                  required={true}
-                  value={faq.answer}
-                  onChange={(e) => handleFAQChange(index, e)}
-                />
-                {faq.error && (
-                  <div
-                    id={`${index}-error`}
-                    aria-live='polite'
-                    aria-atomic='true'
-                  >
-                    <p className='mt-2 text-sm text-red-500'>{faq.error}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+
+          <h3 className='text-lg font-semibold my-6'>Highlights</h3>
           <LabeledTextarea
             id='highlightsDescription'
             rows={4}
@@ -419,7 +390,9 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
           />
           <div>
             <div className='flex flex-row justify-between align-middle'>
-              <h3 className='text-lg font-semibold mb-2'>Highlights</h3>
+              <h3 className='text-md font-medium mb-2'>
+                Add Highlight Details
+              </h3>
               <button
                 type='button'
                 onClick={addHighlight}
@@ -429,7 +402,13 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
               </button>
             </div>
             {formData.highlights.map((highlight, index) => (
-              <div key={index} className='mb-2'>
+              <div key={index} className='relative mt-4 mb-2'>
+                <button
+                  className='absolute top-1 right-1'
+                  onClick={() => removeHighlight(index)}
+                >
+                  <FiDelete className='w-4' />
+                </button>
                 <LabeledInput
                   id='highlight-title-index'
                   disabled={isLoading}
@@ -464,6 +443,62 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
                     <p className='mt-2 text-sm text-red-500'>
                       {highlight.error}
                     </p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className='mb-4'>
+            <div className='flex flex-row justify-between align-middle'>
+              <h3 className='text-lg font-semibold mb-2'>FAQs</h3>{" "}
+              <button
+                type='button'
+                onClick={addFAQ}
+                className='bg-blue-500 text-white py-2 px-4 rounded'
+              >
+                Add FAQ
+              </button>
+            </div>
+            {formData.FAQs.map((faq, index) => (
+              <div key={index} className='relative mt-4 mb-2'>
+                <button
+                  className='absolute top-1 right-1'
+                  onClick={() => removeFAQ(index)}
+                >
+                  <FiDelete className='w-4' />
+                </button>
+                <LabeledInput
+                  id='faq-question-index'
+                  disabled={isLoading}
+                  type='text'
+                  label={"Question"}
+                  name='question'
+                  value={faq.question}
+                  className='mt-1 block w-full rounded-md border-gray-300'
+                  onChange={(e) => handleFAQChange(index, e)}
+                  required={true}
+                  placeholder='Question'
+                  min={5}
+                />
+                <LabeledTextarea
+                  id='faq-answer'
+                  rows={4}
+                  placeholder='Write the answer here...'
+                  label='Answer: '
+                  name='answer'
+                  minLength={5}
+                  disabled={isLoading}
+                  required={true}
+                  value={faq.answer}
+                  onChange={(e) => handleFAQChange(index, e)}
+                />
+                {faq.error && (
+                  <div
+                    id={`${index}-error`}
+                    aria-live='polite'
+                    aria-atomic='true'
+                  >
+                    <p className='mt-2 text-sm text-red-500'>{faq.error}</p>
                   </div>
                 )}
               </div>

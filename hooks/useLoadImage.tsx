@@ -1,6 +1,6 @@
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
-const useLoadImage = (path: string, type: string) => {
+const useLoadImage = (path: string, type: "brands" | "vouchers") => {
   const supabaseClient = useSupabaseClient();
 
   let storageType = "";

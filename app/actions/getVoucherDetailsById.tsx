@@ -31,7 +31,7 @@ const getVoucherDetailsById = async (
     discountPercentage: data[0].discount_percentage,
     expirationDate: data[0].expiration_date,
     FAQs: JSON.parse(data[0].faq),
-    highlightsDescription: JSON.parse(data[0].highlights)["description"],
+    highlightsDescription: JSON.parse(data[0].highlights)["description"].value,
     highlights: JSON.parse(data[0].highlights)["list"],
   };
 
