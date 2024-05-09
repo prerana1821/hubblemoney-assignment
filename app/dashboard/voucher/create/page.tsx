@@ -1,5 +1,3 @@
-// import Form from "@/app/ui/invoices/create-form";
-// import { fetchCustomers } from "@/app/lib/data";
 import getBrandNames from "@/app/actions/getBrandNames";
 import Breadcrumbs from "@/app/components/layout/breadcrumbs";
 import Form from "@/app/components/voucher/form";

@@ -157,7 +157,7 @@ export default function Form({
           );
         } else {
           toast.success("Brand Metadata is added!");
-          router.push("/voucher/create");
+          router.push("/dashboard/voucher/create");
         }
       }
 

@@ -1,14 +1,17 @@
 ## Todo
 
-- brand categories should come from database
-- error handling form
-- if a brand is deleted, delete the logo as well from storage and associated banners as well
+<!-- - brand categories should come from database -->
+<!-- - error handling form -->
+<!-- - login or dashboard on site page -->
+<!-- - if a brand is deleted, delete the logo as well from storage and associated banners as well -->
+
 - card analytics for metadata and vouchers
 - take all the breadcrumbs to constants
-- css
-- login or dashboard on site page
 - onhover hightlights
 - view details
+- css
+- pagination
+- Add remove highlight & FAQ
 
 ## Good to have
 
