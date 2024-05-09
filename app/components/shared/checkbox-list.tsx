@@ -1,16 +1,13 @@
 import useOutsideClick from "@/hooks/useOutsideClick";
+import { ColumnItem } from "@/types/app";
 import React, { useState, useRef, useEffect } from "react";
+import toast from "react-hot-toast";
 import { VscSettings } from "react-icons/vsc";
 
-interface CheckboxItem {
-  label: string;
-  value?: string;
-}
-
 interface CheckboxListProps {
-  items: CheckboxItem[];
+  items: ColumnItem[];
   checkedItems: string[];
-  onCheckboxChange: (index: number) => void;
+  onCheckboxChange: (value: ColumnItem) => void;
 }
 
 const CheckboxList: React.FC<CheckboxListProps> = ({
@@ -20,6 +17,7 @@ const CheckboxList: React.FC<CheckboxListProps> = ({
 }) => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [dropdownWidth, setDropdownWidth] = useState<number>(0);
+  const [numChecked, setNumChecked] = useState<number>(checkedItems.length);
   const dropdownRef = useRef<HTMLUListElement>(null);
   const viewRef = useRef<HTMLDivElement>(null);
 
@@ -30,7 +28,29 @@ const CheckboxList: React.FC<CheckboxListProps> = ({
     }
   }, [menuOpen]);
 
+  useEffect(() => {
+    setNumChecked(checkedItems.length);
+  }, [checkedItems]);
+
   useOutsideClick(dropdownRef, () => setMenuOpen(false));
+
+  const handleCheckboxValues = (item: ColumnItem) => {
+    const updatedCheckedItems = [...checkedItems];
+    if (updatedCheckedItems.includes(item.value)) {
+      if (numChecked >= 3) {
+        const index = updatedCheckedItems.indexOf(item.value);
+        updatedCheckedItems.splice(index, 1);
+        setNumChecked(numChecked - 1);
+      }
+    } else {
+      updatedCheckedItems.push(item.value);
+      setNumChecked(numChecked + 1);
+    }
+    onCheckboxChange(item);
+    if (updatedCheckedItems.length === 3) {
+      toast.error("You need to select at least three items.");
+    }
+  };
 
   return (
     <div className='mb-4'>
@@ -66,12 +86,12 @@ const CheckboxList: React.FC<CheckboxListProps> = ({
                   <input
                     id={`checkbox-${index}`}
                     type='checkbox'
-                    value={item.value || ""}
-                    checked={checkedItems[index]?.length > 0} // Updated to boolean
-                    onChange={() => {
-                      onCheckboxChange(index);
-                      setMenuOpen(false);
-                    }}
+                    value={item.value}
+                    checked={checkedItems.includes(item.value)}
+                    disabled={
+                      numChecked <= 3 && checkedItems.includes(item.value)
+                    }
+                    onChange={() => handleCheckboxValues(item)}
                     className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500'
                   />
                   <label

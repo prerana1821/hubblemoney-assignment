@@ -7,9 +7,10 @@ import LabeledSelect from "../shared/labeled-select";
 import MultiSelectorChip from "../shared/multi-selector";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import queryString from "query-string";
-import { FilterFormData } from "@/types/app";
+import { ColumnItem, FilterFormData } from "@/types/app";
 import useDebounce from "@/hooks/useDebounce";
 import { BRAND_STATUS, TABLE_COLUMNS } from "@/app/utils/constants";
+import toast from "react-hot-toast";
 
 const TableFilters = () => {
   const pathname = usePathname();
@@ -132,21 +133,23 @@ const TableFilters = () => {
     }));
   };
 
-  const handleCheckboxChange = (index: number) => {
-    const updatedSelectedColumns = [...formData.selectedColumns];
-    const newValue = TABLE_COLUMNS[index].value;
-    const selectedIndex = updatedSelectedColumns.indexOf(newValue);
+  const handleCheckboxChange = (value: ColumnItem) => {
+    setFormData((prevFormData) => {
+      const selectedValue = prevFormData.selectedColumns.find(
+        (column) => column === value.value
+      );
 
-    if (selectedIndex === -1) {
-      updatedSelectedColumns.push(newValue);
-    } else {
-      updatedSelectedColumns.splice(selectedIndex, 1);
-    }
+      const updatedSelectedColumns = selectedValue
+        ? prevFormData.selectedColumns.filter(
+            (column) => column !== value.value
+          )
+        : [...prevFormData.selectedColumns, value.value];
 
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      selectedColumns: updatedSelectedColumns,
-    }));
+      return {
+        ...prevFormData,
+        selectedColumns: updatedSelectedColumns,
+      };
+    });
   };
 
   const handleQueryChange = (newQuery: string) => {

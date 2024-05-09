@@ -6,6 +6,9 @@
 - card analytics for metadata and vouchers
 - take all the breadcrumbs to constants
 - css
+- login or dashboard on site page
+- onhover hightlights
+- view details
 
 ## Good to have
 

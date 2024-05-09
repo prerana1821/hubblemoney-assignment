@@ -151,3 +151,8 @@ export interface FormValidationData {
   expirationDate?: { value: string; error: string | null };
   highlightsDescription?: { value: string; error: string | null };
 }
+
+export interface ColumnItem {
+  label: string;
+  value: string;
+}

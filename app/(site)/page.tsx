@@ -2,8 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import Footer from "@/app/components/layout/footer";
 import { FaArrowRightLong } from "react-icons/fa6";
+import NavigateToDashboard from "../components/login/buttons";
 
-export default function Page() {
+export default async function Page() {
   return (
     <div className='flex min-h-screen flex-col p-6'>
       <div className='flex items-end rounded-lg bg-blue-500 p-4 md:h-48'>
@@ -22,12 +23,7 @@ export default function Page() {
           <p className={`text-xl text-gray-800 md:text-3xl md:leading-normal`}>
             <strong>Welcome to Hubble Money Brand Management Dashboard.</strong>{" "}
           </p>
-          <Link
-            href='/login'
-            className='flex items-center gap-5 self-start rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base'
-          >
-            <span>Log in</span> <FaArrowRightLong className='w-5 md:w-6' />
-          </Link>
+          <NavigateToDashboard />
         </div>
         <div className='flex items-center justify-center md:w-3/5'>
           <Image
