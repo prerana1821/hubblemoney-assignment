@@ -1,5 +1,6 @@
 import DataTable from "@/app/components/dashboard/table";
 import TableFilters from "@/app/components/dashboard/table-filters";
+import { TableSkeleton } from "@/app/components/layout/skeletons";
 import { Suspense } from "react";
 
 export default async function Page({
@@ -31,7 +32,7 @@ export default async function Page({
       <div className='mt-4 flex flex-col gap-2 md:mt-8'>
         <TableFilters />
       </div>
-      <Suspense fallback={"loading..."}>
+      <Suspense fallback={<TableSkeleton />}>
         <DataTable
           filters={{
             currentPage,

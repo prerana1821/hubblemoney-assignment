@@ -1,5 +1,7 @@
 import Breadcrumbs from "@/app/components/layout/breadcrumbs";
+import { FormSkeleton } from "@/app/components/layout/skeletons";
 import Form from "@/app/components/metadata/form";
+import { Suspense } from "react";
 
 export default async function Page() {
   return (
@@ -14,7 +16,9 @@ export default async function Page() {
           },
         ]}
       />
-      <Form />
+      <Suspense fallback={<FormSkeleton />}>
+        <Form />
+      </Suspense>
     </main>
   );
 }

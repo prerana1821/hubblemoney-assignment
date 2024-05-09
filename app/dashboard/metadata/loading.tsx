@@ -1,3 +1,5 @@
+import { CardsSkeleton } from "@/app/components/layout/skeletons";
+
 export default function Loading() {
-  return <div>Loading</div>;
+  return <CardsSkeleton />;
 }

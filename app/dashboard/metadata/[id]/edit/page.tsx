@@ -1,8 +1,10 @@
 import getBrandDetailsById from "@/app/actions/getBrandDetailsById";
 import getImage from "@/app/actions/getImage";
 import Breadcrumbs from "@/app/components/layout/breadcrumbs";
+import { FormSkeleton } from "@/app/components/layout/skeletons";
 import Form from "@/app/components/metadata/form";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const id = params.id;
@@ -26,7 +28,9 @@ export default async function Page({ params }: { params: { id: string } }) {
           },
         ]}
       />
-      <Form brand={brandDetails} logoUrl={logoUrl} />
+      <Suspense fallback={<FormSkeleton />}>
+        <Form brand={brandDetails} logoUrl={logoUrl} />
+      </Suspense>
     </main>
   );
 }

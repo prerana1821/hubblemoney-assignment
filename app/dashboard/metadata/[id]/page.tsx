@@ -1,8 +1,10 @@
 import getBrandDetailsById from "@/app/actions/getBrandDetailsById";
 import getImage from "@/app/actions/getImage";
 import Breadcrumbs from "@/app/components/layout/breadcrumbs";
+import { BrandCardSkeleton } from "@/app/components/layout/skeletons";
 import BrandCard from "@/app/components/metadata/brand-card";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const id = params.id;
@@ -26,7 +28,9 @@ export default async function Page({ params }: { params: { id: string } }) {
           },
         ]}
       />
-      <BrandCard brand={brandDetails} imagePath={logoUrl} />
+      <Suspense fallback={<BrandCardSkeleton />}>
+        <BrandCard brand={brandDetails} imagePath={logoUrl} />
+      </Suspense>
     </main>
   );
 }

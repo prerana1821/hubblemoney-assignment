@@ -1,6 +1,8 @@
 import getBrandNames from "@/app/actions/getBrandNames";
 import Breadcrumbs from "@/app/components/layout/breadcrumbs";
+import { FormSkeleton } from "@/app/components/layout/skeletons";
 import Form from "@/app/components/voucher/form";
+import { Suspense } from "react";
 
 export default async function Page() {
   const brands = await getBrandNames();
@@ -17,7 +19,9 @@ export default async function Page() {
           },
         ]}
       />
-      <Form brandNames={brands} />
+      <Suspense fallback={<FormSkeleton />}>
+        <Form brandNames={brands} />
+      </Suspense>
     </main>
   );
 }

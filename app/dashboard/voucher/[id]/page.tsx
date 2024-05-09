@@ -1,8 +1,10 @@
 import getImage from "@/app/actions/getImage";
 import getVoucherDetailsById from "@/app/actions/getVoucherDetailsById";
 import Breadcrumbs from "@/app/components/layout/breadcrumbs";
+import { VoucherCardSkeleton } from "@/app/components/layout/skeletons";
 import VoucherCard from "@/app/components/voucher/voucher-card";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const id = params.id;
@@ -28,7 +30,9 @@ export default async function Page({ params }: { params: { id: string } }) {
           },
         ]}
       />
-      <VoucherCard voucher={{ ...voucherDetails, banner_path: bannerUrl }} />
+      <Suspense fallback={<VoucherCardSkeleton />}>
+        <VoucherCard voucher={{ ...voucherDetails, banner_path: bannerUrl }} />
+      </Suspense>
     </main>
   );
 }
