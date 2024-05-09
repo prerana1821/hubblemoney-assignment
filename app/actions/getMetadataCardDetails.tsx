@@ -1,4 +1,3 @@
-import { Brand, BrandData } from "@/types/app";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 
@@ -11,7 +10,6 @@ interface BrandCounts {
 const getMetadataCardDetails = async (): Promise<BrandCounts> => {
   const supabase = createServerComponentClient({ cookies: cookies });
 
-  // Get total brands count
   const { data: totalData, error: totalError } = await supabase
     .from("brands")
     .select("*");
@@ -27,7 +25,6 @@ const getMetadataCardDetails = async (): Promise<BrandCounts> => {
 
   const totalCount = totalData ? totalData.length : 0;
 
-  // Get active brands count
   const { data: activeData, error: activeError } = await supabase
     .from("brands")
     .select("*")

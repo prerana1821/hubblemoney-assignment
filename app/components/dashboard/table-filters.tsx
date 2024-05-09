@@ -32,8 +32,6 @@ const TableFilters = () => {
     tableRows: "10",
   });
 
-  console.log({ formData });
-
   const debouncedValue = useDebounce({
     value: formData.brandName,
     delay: 300,
@@ -52,8 +50,6 @@ const TableFilters = () => {
         skipEmptyString: true,
       }
     );
-
-    console.log(queryString.parse(queryParams));
 
     replace(`${pathname}${queryParams ? "?" + queryParams : ""}`);
   }, [debouncedValue, formData, pathname, replace, formData.brandName]);
@@ -121,8 +117,6 @@ const TableFilters = () => {
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    console.log({ name, value });
-
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,

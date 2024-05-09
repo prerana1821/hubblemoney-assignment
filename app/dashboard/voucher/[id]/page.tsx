@@ -16,8 +16,6 @@ export default async function Page({ params }: { params: { id: string } }) {
     notFound();
   }
 
-  console.log({ voucherDetails });
-
   return (
     <main>
       <Breadcrumbs

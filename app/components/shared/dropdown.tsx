@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import React, { FC, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { FaEllipsis } from "react-icons/fa6";
-import MetadataDetailsModal from "../dashboard/metadata-modal";
 import { LuLayoutPanelLeft } from "react-icons/lu";
 import { FaRegEdit } from "react-icons/fa";
 import { AiOutlineDelete } from "react-icons/ai";
@@ -21,7 +20,6 @@ const Dropdown: FC<DropdownProps> = ({ brandId, voucherId }) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const [showMetadataModal, setShowMetadataModal] = useState(false);
   const { supabaseClient } = useSessionContext();
 
   useOutsideClick(dropdownRef, () => setOpen(false));
@@ -103,12 +101,6 @@ const Dropdown: FC<DropdownProps> = ({ brandId, voucherId }) => {
             </div>
           )}
         </div>
-      )}
-      {showMetadataModal && (
-        <MetadataDetailsModal
-          brandId={brandId}
-          onClose={() => setShowMetadataModal(false)}
-        />
       )}
     </div>
   );

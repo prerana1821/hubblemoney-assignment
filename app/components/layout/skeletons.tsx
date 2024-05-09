@@ -118,8 +118,8 @@ export function CardsSkeleton() {
 
 export function FormSkeleton() {
   return (
-    <form className={`${SHIMMER}`}>
-      <div className='rounded-md bg-gray-50 p-4 md:p-6'>
+    <form>
+      <div className={`${SHIMMER} rounded-md bg-gray-50 p-4 md:p-6`}>
         <h3 className='text-2xl font-bold mb-4'>Brand Details: </h3>
         <div className='ml-4'>
           <label htmlFor='logo' className='mb-2 block text-sm font-medium'>
@@ -212,7 +212,7 @@ export function BrandCardSkeleton() {
       role='status'
       className='space-y-8 animate-pulse md:space-y-0 md:space-x-8 rtl:space-x-reverse md:flex md:items-center'
     >
-      <div className='flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96'>
+      <div className='flex items-center justify-center w-full h-48 bg-gray-300 rounded-full sm:w-96'>
         <svg
           className='w-10 h-10 text-gray-200 '
           aria-hidden='true'
@@ -255,6 +255,10 @@ export function VoucherCardSkeleton() {
         </svg>
         <span className='sr-only'>Loading...</span>
       </div>
+      <br />
+      <br />
+      <br />
+      <br />
 
       <div role='status' className='space-y-2.5 animate-pulse max-w-lg'>
         <div className='flex items-center w-full'>

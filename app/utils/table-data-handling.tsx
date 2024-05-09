@@ -1,21 +1,13 @@
 import { Highlight, MetadataItem, TableData } from "@/types/app";
+import { TABLE_COLUMNS } from "./constants";
 
 export function renderTableHeaders(selectedColumns: string[]) {
-  const columns = [
-    { key: "Brand Name", label: "Brand Name" },
-    { key: "Brand Category", label: "Brand Category" },
-    { key: "Brand Status", label: "Brand Status" },
-    { key: "Voucher Highlights", label: "Voucher Highlights" },
-    { key: "Voucher Expiry Date", label: "Voucher Expiry Date" },
-    { key: "Voucher Discount", label: "Voucher Discount" },
-  ];
-
-  return columns.map(
+  return TABLE_COLUMNS.map(
     (column) =>
       (selectedColumns.length === 0 ||
-        selectedColumns.includes(column.key)) && (
-        <th key={column.key} scope='col' className='px-3 py-5 font-medium'>
-          {column.label}
+        selectedColumns.includes(column.value)) && (
+        <th key={column.value} scope='col' className='px-3 py-5 font-medium'>
+          {column.value}
         </th>
       )
   );

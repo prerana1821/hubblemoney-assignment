@@ -56,8 +56,6 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
 
   let deafultEditVoucherFormState: VoucherFormState = {} as VoucherFormState;
 
-  console.log({ voucher });
-
   if (voucher) {
     deafultEditVoucherFormState = {
       bannerImage: {
@@ -223,10 +221,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
         (brand) => brand.name === formData.brandName.value
       );
 
-      console.log(3, { voucher });
-
       if (voucher) {
-        console.log("Hii");
         const { error: supabaseEditError } = await supabaseClient
           .from("vouchers")
           .upsert({
@@ -262,8 +257,6 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
           router.push("/dashboard");
         }
       } else {
-        console.log("Hello");
-
         const { error: supabaseError } = await supabaseClient
           .from("vouchers")
           .insert({

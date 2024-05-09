@@ -8,7 +8,6 @@ const getVoucherCounts = async (): Promise<{
 }> => {
   const supabase = createServerComponentClient({ cookies: cookies });
 
-  // Get total number of vouchers
   const { data: totalData, error: totalError } = await supabase
     .from("vouchers")
     .select("id");
@@ -24,7 +23,6 @@ const getVoucherCounts = async (): Promise<{
 
   const totalCount = totalData ? totalData.length : 0;
 
-  // Get number of active vouchers
   const currentDate = new Date();
   const { data: activeData, error: activeError } = await supabase
     .from("vouchers")

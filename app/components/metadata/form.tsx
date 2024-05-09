@@ -23,7 +23,6 @@ import { MdOutlinePersonOutline } from "react-icons/md";
 import { BiCategoryAlt } from "react-icons/bi";
 import { TbTextPlus } from "react-icons/tb";
 
-
 const defaultAddBrandFormState: BrandFormState = {
   logo: { name: "", photo: "", type: "", size: 0, file: null, error: null },
   name: { value: "", error: null },
@@ -169,7 +168,7 @@ export default function Form({
       setIsLoading(false);
       setFormData(defaultAddBrandFormState);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error("Something went wrong");
     } finally {
       setIsLoading(false);

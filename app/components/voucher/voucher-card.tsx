@@ -5,8 +5,6 @@ import Image from "next/image";
 import React from "react";
 
 const VoucherCard = ({ voucher }: { voucher: VoucherDataFromDB }) => {
-  console.log({ voucher });
-
   return (
     <div className=' overflow-hidden flex flex-col'>
       <div className='flex flex-row '>
