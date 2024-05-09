@@ -1,4 +1,7 @@
 import { BRAND_STATUS, CATEGORIES, COLUMN_NAMES } from "@/app/utils/constants";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { Dispatch, FormEvent, SetStateAction } from "react";
 export interface UserDetails {
   id: string;
   full_name?: string;
@@ -154,4 +157,22 @@ export type FormState = BrandFormState | VoucherFormState;
 export enum FileType {
   BrandLogo = "brandLogo",
   VoucherBanner = "voucherBanner",
+}
+
+export interface HandleFormSubmitParams {
+  event: FormEvent;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
+  formData: BrandFormState;
+  setFormData: Dispatch<SetStateAction<BrandFormState>>;
+  supabaseClient: SupabaseClient<any, "public", any>;
+  router: AppRouterInstance;
+  brand: BrandDataFromDB | undefined;
+}
+
+export interface VoucherFormSubmitParams
+  extends Omit<HandleFormSubmitParams, "brand" | "formData" | "setFormData"> {
+  formData: VoucherFormState;
+  setFormData: Dispatch<SetStateAction<VoucherFormState>>;
+  voucher?: VoucherDataFromDB;
+  brandNames: BrandNames[];
 }

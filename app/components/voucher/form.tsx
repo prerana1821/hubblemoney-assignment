@@ -10,7 +10,7 @@ import {
 import LabeledInput from "../shared/labeled-input";
 import LabeledTextarea from "../shared/labeled-textarea";
 import LabeledSelect from "../shared/labeled-select";
-import { FileUploader } from "../shared/file-uploader";
+import FileUploader from "../shared/file-uploader";
 import {
   deleteFile,
   handleFormValidations,
@@ -30,23 +30,17 @@ import { TbTextPlus } from "react-icons/tb";
 import { GrCircleQuestion } from "react-icons/gr";
 import { MdOutlineTitle } from "react-icons/md";
 import { PiTextAaBold } from "react-icons/pi";
-
-const voucherFormInitialState: VoucherFormState = {
-  brandName: { value: "", error: null },
-  bannerImage: {
-    name: "",
-    photo: "",
-    type: "",
-    size: 0,
-    file: null,
-    error: null,
-  },
-  discountPercentage: { value: 0, error: null },
-  expirationDate: { value: "", error: null },
-  highlightsDescription: { value: "", error: null },
-  FAQs: [{ question: "", answer: "", error: null }],
-  highlights: [{ title: "", text: "", error: null }],
-};
+import {
+  addFAQ,
+  addHighlight,
+  handleFAQChange,
+  handleFormSubmit,
+  handleHighlightChange,
+  handleVoucherChange,
+  removeFAQ,
+  removeHighlight,
+  voucherFormInitialState,
+} from "@/app/utils/voucher-form-handling";
 
 interface FromProps {
   brandNames: BrandNames[];
@@ -94,220 +88,21 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
     voucher ? deafultEditVoucherFormState : voucherFormInitialState
   );
 
-  const handleVoucherChange = (
-    event: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
-  ) => {
-    const { name, value } = event.target;
-
-    setFormData({
-      ...formData,
-      [name]: { value },
-    });
-  };
-
-  const handleFAQChange = (
-    index: number,
-    event: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value } = event.target;
-    const newFAQs = formData.FAQs.map((faq, i) =>
-      i === index ? { ...faq, [name]: value } : faq
-    );
-    setFormData({
-      ...formData,
-      FAQs: newFAQs,
-    });
-  };
-
-  const handleHighlightChange = (
-    index: number,
-    event: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value } = event.target;
-    const newHighlights = formData.highlights.map((highlight, i) =>
-      i === index ? { ...highlight, [name]: value } : highlight
-    );
-    setFormData({
-      ...formData,
-      highlights: newHighlights,
-    });
-  };
-
-  const addFAQ = () => {
-    setFormData({
-      ...formData,
-      FAQs: [...formData.FAQs, { question: "", answer: "", error: null }],
-    });
-  };
-
-  const addHighlight = () => {
-    setFormData({
-      ...formData,
-      highlights: [
-        ...formData.highlights,
-        { title: "", text: "", error: null },
-      ],
-    });
-  };
-
-  const removeHighlight = (indexToRemove: number) => {
-    const updatedHighlights = formData.highlights.filter(
-      (_, index) => index !== indexToRemove
-    );
-    setFormData({
-      ...formData,
-      highlights: updatedHighlights,
-    });
-  };
-
-  const removeFAQ = (indexToRemove: number) => {
-    const updatedFAQs = formData.FAQs.filter(
-      (_, index) => index !== indexToRemove
-    );
-    setFormData({
-      ...formData,
-      FAQs: updatedFAQs,
-    });
-  };
-
-  const handleFormSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-
-    try {
-      setIsLoading(true);
-
-      if (!formData.bannerImage?.file && formData.bannerImage.path === "") {
-        setIsLoading(false);
-        return toast.error("Missing Banner Image File.");
-      }
-
-      const hasErrors = handleFormValidations(formData, setFormData, "voucher");
-
-      if (hasErrors) {
-        setIsLoading(false);
-        return;
-      }
-
-      const uniqueID = uniqid();
-      let bannerData;
-
-      if (
-        !formData.bannerImage.path ||
-        formData.bannerImage.path.length === 0
-      ) {
-        const { data: _bannerData, error: bannerError } =
-          await supabaseClient.storage
-            .from("banners")
-            .upload(
-              `banner-${formData.bannerImage.name}-${uniqueID}`,
-              formData.bannerImage.file as File,
-              {
-                cacheControl: "3600",
-                upsert: false,
-              }
-            );
-
-        if (bannerError) {
-          console.error({ bannerError });
-          setIsLoading(false);
-          return toast.error("Failed Banner Image upload.");
-        }
-
-        bannerData = _bannerData;
-      }
-
-      const selectedBrandId = brandNames.find(
-        (brand) => brand.name === formData.brandName.value
-      );
-
-      if (voucher) {
-        const { error: supabaseEditError } = await supabaseClient
-          .from("vouchers")
-          .upsert({
-            id: voucher?.id,
-            brand_id: voucher?.brand.id,
-            ...(formData.bannerImage.path
-              ? {}
-              : { banner_path: bannerData?.path }),
-            discount_percentage: formData.discountPercentage.value,
-            expiration_date: formData.expirationDate.value,
-            faq: JSON.stringify(
-              formData.FAQs.map((faq) => ({
-                question: faq.question,
-                answer: faq.answer,
-              }))
-            ),
-            highlights: JSON.stringify({
-              description: formData.highlightsDescription,
-              list: formData.highlights.map((highlight) => ({
-                title: highlight.title,
-                text: highlight.text,
-              })),
-            }),
-          });
-
-        if (supabaseEditError) {
-          setIsLoading(false);
-          return toast.error(
-            `Error updating the voucher: ${supabaseEditError.message}`
-          );
-        } else {
-          toast.success("Voucher is updated for the brand successfully.");
-          router.push("/dashboard");
-        }
-      } else {
-        const { error: supabaseError } = await supabaseClient
-          .from("vouchers")
-          .insert({
-            brand_id: selectedBrandId?.id,
-            banner_path: bannerData?.path,
-            discount_percentage: formData.discountPercentage.value,
-            expiration_date: formData.expirationDate.value,
-            faq: JSON.stringify(
-              formData.FAQs.map((faq) => ({
-                question: faq.question,
-                answer: faq.answer,
-              }))
-            ),
-            highlights: JSON.stringify({
-              description: formData.highlightsDescription,
-              list: formData.highlights.map((highlight) => ({
-                title: highlight.title,
-                text: highlight.text,
-              })),
-            }),
-          });
-
-        if (supabaseError) {
-          setIsLoading(false);
-          return toast.error(supabaseError.message);
-        } else {
-          toast.success("Voucher is added to the brand!");
-        }
-      }
-
-      router.push("/dashboard");
-      setIsLoading(false);
-      setFormData({
-        ...voucherFormInitialState,
-        FAQs: [{ question: "", answer: "", error: null }],
-        highlights: [{ title: "", text: "", error: null }],
-      });
-    } catch (error) {
-      toast.error("Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <form onSubmit={handleFormSubmit}>
+    <form
+      onSubmit={(event) =>
+        handleFormSubmit({
+          event,
+          supabaseClient,
+          router,
+          setIsLoading,
+          formData,
+          setFormData,
+          brandNames,
+          voucher,
+        })
+      }
+    >
       <div className='rounded-md bg-gray-50 p-4 md:p-6'>
         <h3 className='text-2xl font-bold mb-4'>Voucher Management: </h3>
         <div className='ml-4'>
@@ -333,7 +128,6 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
             count={1}
             formats={["jpg", "jpeg", "png"]}
           />
-
           <LabeledInput
             id='discountPercentage'
             type='number'
@@ -343,7 +137,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
             name='discountPercentage'
             value={formData.discountPercentage.value}
             className='mt-1 block w-full rounded-md border-gray-300'
-            onChange={handleVoucherChange}
+            onChange={(e) => handleVoucherChange(e, setFormData)}
             required={true}
             error={formData.discountPercentage.error}
             placeholder='Discount Percentage'
@@ -354,7 +148,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
             name='brandName'
             icon={MdOutlinePersonOutline}
             value={formData.brandName.value}
-            onChange={handleVoucherChange}
+            onChange={(e) => handleVoucherChange(e, setFormData)}
             disabled={isLoading || !!voucher}
             error={formData.brandName.error}
           >
@@ -377,7 +171,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
             icon={CiCalendarDate}
             value={formData.expirationDate.value}
             className='mt-1 block w-full rounded-md border-gray-300'
-            onChange={handleVoucherChange}
+            onChange={(e) => handleVoucherChange(e, setFormData)}
             required={true}
             placeholder='Expiration Date:'
             error={formData.expirationDate.error}
@@ -394,7 +188,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
             disabled={isLoading}
             required={true}
             value={formData.highlightsDescription.value}
-            onChange={handleVoucherChange}
+            onChange={(e) => handleVoucherChange(e, setFormData)}
             error={formData.highlightsDescription.error}
           />
           <div>
@@ -404,7 +198,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
               </h3>
               <button
                 type='button'
-                onClick={addHighlight}
+                onClick={() => addHighlight(setFormData)}
                 className='bg-blue-500 text-white py-2 px-4 rounded'
               >
                 Add Highlight
@@ -414,7 +208,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
               <div key={index} className='relative mt-4 mb-2'>
                 <button
                   className='absolute top-1 right-1'
-                  onClick={() => removeHighlight(index)}
+                  onClick={() => removeHighlight(index, setFormData)}
                 >
                   <FiDelete className='w-4' />
                 </button>
@@ -428,7 +222,9 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
                   icon={MdOutlineTitle}
                   value={highlight.title}
                   className='mt-1 block w-full rounded-md border-gray-300'
-                  onChange={(e) => handleHighlightChange(index, e)}
+                  onChange={(e) =>
+                    handleHighlightChange(index, e, formData, setFormData)
+                  }
                   required={true}
                   placeholder='Title'
                 />
@@ -443,7 +239,9 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
                   icon={TbTextPlus}
                   required={true}
                   value={highlight.text}
-                  onChange={(e) => handleHighlightChange(index, e)}
+                  onChange={(e) =>
+                    handleHighlightChange(index, e, formData, setFormData)
+                  }
                 />
                 {highlight.error && (
                   <div
@@ -464,7 +262,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
               <h3 className='text-lg font-semibold mb-2'>FAQs</h3>{" "}
               <button
                 type='button'
-                onClick={addFAQ}
+                onClick={() => addFAQ(setFormData)}
                 className='bg-blue-500 text-white py-2 px-4 rounded'
               >
                 Add FAQ
@@ -474,7 +272,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
               <div key={index} className='relative mt-4 mb-2'>
                 <button
                   className='absolute top-1 right-1'
-                  onClick={() => removeFAQ(index)}
+                  onClick={() => removeFAQ(index, setFormData)}
                 >
                   <FiDelete className='w-4' />
                 </button>
@@ -486,7 +284,9 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
                   name='question'
                   value={faq.question}
                   className='mt-1 block w-full rounded-md border-gray-300'
-                  onChange={(e) => handleFAQChange(index, e)}
+                  onChange={(e) =>
+                    handleFAQChange(index, e, formData, setFormData)
+                  }
                   required={true}
                   icon={GrCircleQuestion}
                   placeholder='Question'
@@ -503,7 +303,9 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
                   disabled={isLoading}
                   required={true}
                   value={faq.answer}
-                  onChange={(e) => handleFAQChange(index, e)}
+                  onChange={(e) =>
+                    handleFAQChange(index, e, formData, setFormData)
+                  }
                 />
                 {faq.error && (
                   <div

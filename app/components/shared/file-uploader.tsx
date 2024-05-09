@@ -15,7 +15,7 @@ interface FileUploaderProps {
   formats: string[];
 }
 
-export function FileUploader({
+export default function FileUploader({
   id,
   label,
   ownerLicense,
