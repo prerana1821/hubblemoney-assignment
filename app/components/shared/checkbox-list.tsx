@@ -2,7 +2,7 @@ import useOutsideClick from "@/hooks/useOutsideClick";
 import { ColumnItem } from "@/types/app";
 import React, { useState, useRef, useEffect } from "react";
 import toast from "react-hot-toast";
-import { VscSettings } from "react-icons/vsc";
+import { CiViewColumn } from "react-icons/ci";
 
 interface CheckboxListProps {
   items: ColumnItem[];
@@ -64,12 +64,12 @@ const CheckboxList: React.FC<CheckboxListProps> = ({
         <div className='relative'>
           <div
             ref={viewRef}
-            className='border py-1 text-center rounded-md border-gray-300 min-w-32'
+            className='border  text-center rounded-md border-gray-300 min-w-32 py-1'
             onClick={() => setMenuOpen(!menuOpen)}
           >
             View
           </div>
-          <VscSettings className='pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900' />
+          <CiViewColumn className='pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900' />
         </div>
         {menuOpen && (
           <ul
@@ -92,7 +92,7 @@ const CheckboxList: React.FC<CheckboxListProps> = ({
                       numChecked <= 3 && checkedItems.includes(item.value)
                     }
                     onChange={() => handleCheckboxValues(item)}
-                    className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500'
+                    className='w-4 h-4 text-blue-600 py-2.5 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500'
                   />
                   <label
                     htmlFor={`checkbox-${index}`}

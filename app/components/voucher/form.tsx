@@ -19,6 +19,12 @@ import { Button } from "../shared/button";
 import toast from "react-hot-toast";
 import { formatToSupabaseDate } from "@/app/utils/string-manipulation";
 import { FiDelete } from "react-icons/fi";
+import { CiCalendarDate, CiDiscount1 } from "react-icons/ci";
+import { MdOutlinePersonOutline } from "react-icons/md";
+import { TbTextPlus } from "react-icons/tb";
+import { GrCircleQuestion } from "react-icons/gr";
+import { MdOutlineTitle } from "react-icons/md";
+import { PiTextAaBold } from "react-icons/pi";
 
 const voucherFormInitialState: VoucherFormState = {
   brandName: { value: "", error: null },
@@ -302,8 +308,6 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
     }
   };
 
-  console.log(formData);
-
   return (
     <form onSubmit={handleFormSubmit}>
       <div className='rounded-md bg-gray-50 p-4 md:p-6'>
@@ -334,6 +338,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
             type='number'
             label={"Discount Percentage"}
             disabled={isLoading}
+            icon={CiDiscount1}
             name='discountPercentage'
             value={formData.discountPercentage.value}
             className='mt-1 block w-full rounded-md border-gray-300'
@@ -346,6 +351,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
             id='brandName'
             label='Choose brand name'
             name='brandName'
+            icon={MdOutlinePersonOutline}
             value={formData.brandName.value}
             onChange={handleVoucherChange}
             disabled={isLoading || !!voucher}
@@ -367,6 +373,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
             type='datetime-local'
             label={"Expiration Date:"}
             name='expirationDate'
+            icon={CiCalendarDate}
             value={formData.expirationDate.value}
             className='mt-1 block w-full rounded-md border-gray-300'
             onChange={handleVoucherChange}
@@ -381,6 +388,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
             rows={4}
             placeholder='Write the description here...'
             label='Highlights Description: '
+            icon={TbTextPlus}
             name='highlightsDescription'
             disabled={isLoading}
             required={true}
@@ -416,6 +424,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
                   label={"Title"}
                   min={5}
                   name='title'
+                  icon={MdOutlineTitle}
                   value={highlight.title}
                   className='mt-1 block w-full rounded-md border-gray-300'
                   onChange={(e) => handleHighlightChange(index, e)}
@@ -430,6 +439,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
                   name='text'
                   minLength={5}
                   disabled={isLoading}
+                  icon={TbTextPlus}
                   required={true}
                   value={highlight.text}
                   onChange={(e) => handleHighlightChange(index, e)}
@@ -477,6 +487,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
                   className='mt-1 block w-full rounded-md border-gray-300'
                   onChange={(e) => handleFAQChange(index, e)}
                   required={true}
+                  icon={GrCircleQuestion}
                   placeholder='Question'
                   min={5}
                 />
@@ -486,6 +497,7 @@ export default function Form({ brandNames, voucher, bannerUrl }: FromProps) {
                   placeholder='Write the answer here...'
                   label='Answer: '
                   name='answer'
+                  icon={PiTextAaBold}
                   minLength={5}
                   disabled={isLoading}
                   required={true}

@@ -8,6 +8,9 @@ import React, { FC, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { FaEllipsis } from "react-icons/fa6";
 import MetadataDetailsModal from "../dashboard/metadata-modal";
+import { LuLayoutPanelLeft } from "react-icons/lu";
+import { FaRegEdit } from "react-icons/fa";
+import { AiOutlineDelete } from "react-icons/ai";
 
 interface DropdownProps {
   brandId: string;
@@ -53,18 +56,21 @@ const Dropdown: FC<DropdownProps> = ({ brandId, voucherId }) => {
               href={`/dashboard/metadata/${brandId}`}
               className='flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100'
             >
+              <LuLayoutPanelLeft />
               View
             </Link>
             <Link
               href={`/dashboard/metadata/${brandId}/edit`}
               className='flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100'
             >
+              <FaRegEdit />
               Edit
             </Link>
             <div
               className='cursor-pointer flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100'
               onClick={() => handleBrandDelete(brandId, "brands")}
             >
+              <AiOutlineDelete />
               Delete
             </div>
           </div>
@@ -77,33 +83,21 @@ const Dropdown: FC<DropdownProps> = ({ brandId, voucherId }) => {
                 href={`/dashboard/voucher/${voucherId}`}
                 className='flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100'
               >
+                <LuLayoutPanelLeft />
                 View
               </Link>
               <Link
                 className='flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100'
                 href={`/dashboard/voucher/${voucherId}/edit`}
               >
-                <svg
-                  className='flex-shrink-0 size-4'
-                  xmlns='http://www.w3.org/2000/svg'
-                  width='24'
-                  height='24'
-                  viewBox='0 0 24 24'
-                  fill='none'
-                  stroke='currentColor'
-                  stroke-width='2'
-                  stroke-linecap='round'
-                  stroke-linejoin='round'
-                >
-                  <path d='M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9' />
-                  <path d='M10.3 21a1.94 1.94 0 0 0 3.4 0' />
-                </svg>
+                <FaRegEdit />
                 Edit
               </Link>
               <div
                 className='cursor-pointer flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100'
                 onClick={() => handleBrandDelete(voucherId, "vouchers")}
               >
+                <AiOutlineDelete />
                 Delete
               </div>
             </div>

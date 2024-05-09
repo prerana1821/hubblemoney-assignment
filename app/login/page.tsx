@@ -1,12 +1,13 @@
 import { LoginContent } from "@/app/components/login/content";
+import Header from "@/app/components/layout/header";
+import Footer from "../components/layout/footer";
 
 export default function LoginPage() {
   return (
-    <main className='flex items-center justify-center md:h-screen'>
-      <div className='relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4 md:-mt-32'>
-        <div className='flex h-20 w-full items-end rounded-lg bg-blue-500 p-3 md:h-36'>
-          <div className='w-32 text-white md:w-36'>{/* <AcmeLogo /> */}</div>
-        </div>
+    <main className='flex items-center justify-center md:h-screen p-6 mx-8'>
+      <div className='relative mx-auto flex w-full flex-col space-y-2.5 p-4 md:-mt-20'>
+        <Header />
+        <h2 className='text-xl font-semibold text-center'>Login/Sign Up</h2>
         <LoginContent />
       </div>
     </main>

@@ -6,6 +6,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import toast from "react-hot-toast";
 import { IoPower } from "react-icons/io5";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function SideNav() {
   const router = useRouter();
@@ -29,7 +30,16 @@ export default function SideNav() {
         className='mb-2 flex h-20 items-end justify-start rounded-md bg-blue-600 p-4 md:h-40'
         href='/'
       >
-        <div className='w-32 text-white md:w-40'>{/* <AcmeLogo /> */}</div>
+        <div className='w-32 text-white md:w-40'>
+          <Link href='/' className='self-center'>
+            <Image
+              src='/logo-name.png'
+              width={100}
+              height={70}
+              alt='Hubble Money Logo'
+            />
+          </Link>
+        </div>
       </Link>
       <div className='flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2'>
         <NavLinks />

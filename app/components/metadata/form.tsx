@@ -19,6 +19,10 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import uniqid from "uniqid";
 import Link from "next/link";
+import { MdOutlinePersonOutline } from "react-icons/md";
+import { BiCategoryAlt } from "react-icons/bi";
+import { TbTextPlus } from "react-icons/tb";
+
 
 const defaultAddBrandFormState: BrandFormState = {
   logo: { name: "", photo: "", type: "", size: 0, file: null, error: null },
@@ -207,6 +211,7 @@ export default function Form({
             onChange={(e) => handleBrandChange(e)}
             required={true}
             error={formData.name.error}
+            icon={MdOutlinePersonOutline}
             placeholder='Brand Name'
           />
           <LabeledTextarea
@@ -218,6 +223,7 @@ export default function Form({
             name='description'
             required={true}
             onChange={handleBrandChange}
+            icon={TbTextPlus}
             value={formData.description.value}
             error={formData.description.error}
           />
@@ -227,6 +233,7 @@ export default function Form({
             name='category'
             value={formData.category.value}
             onChange={handleBrandChange}
+            icon={BiCategoryAlt}
             disabled={isLoading}
             error={formData.category.error}
           >

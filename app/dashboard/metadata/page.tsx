@@ -1,6 +1,6 @@
 import getMetadataCardDetails from "@/app/actions/getMetadataCardDetails";
 import { CreateBrandData } from "@/app/components/metadata/buttons";
-import { Card } from "@/app/components/metadata/count-card";
+import { Card } from "@/app/components/shared/count-card";
 
 export default async function Page() {
   const cardData = await getMetadataCardDetails();

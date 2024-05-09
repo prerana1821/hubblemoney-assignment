@@ -22,9 +22,9 @@ export const LoginContent: React.FC = () => {
   }, [router, user?.id]);
 
   return (
-    <div className='flex flex-col gap-y-2 w-full p-6'>
+    <div className='flex flex-col gap-y-2 w-full max-w-lg p-6 bg-gray-50 rounded-md self-center my-10 '>
       <Auth
-        theme='dark'
+        theme='light'
         magicLink
         providers={["github"]}
         supabaseClient={supabaseClient}
@@ -33,8 +33,8 @@ export const LoginContent: React.FC = () => {
           variables: {
             default: {
               colors: {
-                brand: "#404040",
-                brandAccent: "#1DB954",
+                brand: "#000",
+                brandAccent: "#3B82F6",
               },
             },
           },

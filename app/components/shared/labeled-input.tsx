@@ -8,10 +8,12 @@ interface LabeledInputProps
   label: string;
   error?: string | null;
   clearInputValue?: (name: string) => void;
+  icon: any;
 }
 
 const LabeledInput = forwardRef<HTMLInputElement, LabeledInputProps>(
-  ({ label, error, className, clearInputValue, ...props }, ref) => {
+  ({ label, error, className, clearInputValue, icon, ...props }, ref) => {
+    const Icon = icon;
     return (
       <div className='mb-4'>
         <div className='flex justify-between align-middle'>
@@ -27,7 +29,7 @@ const LabeledInput = forwardRef<HTMLInputElement, LabeledInputProps>(
             </div>
           )}
         </div>
-        <div className='relative mt-2 rounded-md'>
+        <div className='relative rounded-md'>
           <div className='relative'>
             <input
               ref={ref}
@@ -37,7 +39,7 @@ const LabeledInput = forwardRef<HTMLInputElement, LabeledInputProps>(
                 className
               )}
             />
-            <MdOutlinePersonOutline className='pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900' />
+            <Icon className='pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900' />
           </div>
           {error && (
             <div id={`${props.id}-error`} aria-live='polite' aria-atomic='true'>

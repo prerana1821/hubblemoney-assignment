@@ -28,7 +28,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           },
         ]}
       />
-      <VoucherCard voucher={{ ...voucherDetails, banner_path: bannerUrl }} />;
+      <VoucherCard voucher={{ ...voucherDetails, banner_path: bannerUrl }} />
     </main>
   );
 }

@@ -1,5 +1,5 @@
 import getVoucherCounts from "@/app/actions/getVoucherCounts";
-import { Card } from "@/app/components/metadata/count-card";
+import { Card } from "@/app/components/shared/count-card";
 import { CreateVoucher } from "@/app/components/voucher/buttons";
 
 export default async function Page() {

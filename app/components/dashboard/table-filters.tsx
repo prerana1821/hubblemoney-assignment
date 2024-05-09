@@ -10,7 +10,10 @@ import queryString from "query-string";
 import { ColumnItem, FilterFormData } from "@/types/app";
 import useDebounce from "@/hooks/useDebounce";
 import { BRAND_STATUS, TABLE_COLUMNS } from "@/app/utils/constants";
-import toast from "react-hot-toast";
+import { GrStatusGood } from "react-icons/gr";
+import { CiCalendarDate, CiDiscount1 } from "react-icons/ci";
+import { MdOutlinePersonOutline, MdOutlineTableRows } from "react-icons/md";
+import { BsListColumnsReverse } from "react-icons/bs";
 
 const TableFilters = () => {
   const pathname = usePathname();
@@ -196,8 +199,6 @@ const TableFilters = () => {
 
   return (
     <>
-      {/* <div className='grid grid-cols-2 gap-4 items-start'> */}
-
       <MultiSelectorChip
         query={formData.brandCategory.query}
         selected={formData.brandCategory?.selected}
@@ -205,7 +206,6 @@ const TableFilters = () => {
         setSelected={handleSelectedChange}
         removeTag={handleRemoveTagChange}
       />
-      {/* </div> */}
       <div className='flex flex-row justify-between align-middle mt-4'>
         <LabeledInput
           id='brandName'
@@ -216,15 +216,17 @@ const TableFilters = () => {
           onChange={handleInputChange}
           required={true}
           placeholder='Brand Name'
-          className='mt-1 block w-full rounded-md border-gray-300'
+          icon={MdOutlinePersonOutline}
+          className='block w-full rounded-md border-gray-300'
         />
         <LabeledSelect
           id='brandStatus'
           label='Choose brand status:'
           name='brandStatus'
-          className='mt-1 block w-full rounded-md border-gray-300'
+          className='block w-full rounded-md border-gray-300'
           value={formData.brandStatus}
           onChange={handleInputChange}
+          icon={GrStatusGood}
         >
           <option value='' disabled>
             Select a status
@@ -244,7 +246,8 @@ const TableFilters = () => {
           name='expirationDate'
           value={formData.expirationDate}
           onChange={handleInputChange}
-          className='mt-1 block w-full rounded-md border-gray-300'
+          className='block w-full rounded-md border-gray-300'
+          icon={CiCalendarDate}
         />
         <LabeledInput
           id='discountPercentage'
@@ -254,7 +257,8 @@ const TableFilters = () => {
           value={formData.discountPercentage}
           onChange={handleInputChange}
           placeholder='Discount Percentage'
-          className='mt-1 block w-full rounded-md border-gray-300'
+          icon={CiDiscount1}
+          className='block w-full rounded-md border-gray-300'
         />
         <CheckboxList
           items={TABLE_COLUMNS}
@@ -267,6 +271,7 @@ const TableFilters = () => {
           name='tableRows'
           value={formData.tableRows}
           onChange={handleInputChange}
+          icon={BsListColumnsReverse}
         >
           <option value='10'>10</option>
           <option value='20'>20</option>

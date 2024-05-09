@@ -1,3 +1,10 @@
+import { BsFillClipboard2DataFill } from "react-icons/bs";
+import {
+  MdOutlineDoNotDisturbOff,
+  MdOutlineWorkspacePremium,
+} from "react-icons/md";
+import { TbCalendarCancel } from "react-icons/tb";
+
 export const CATEGORIES = [
   "Food",
   "One stop shop",
@@ -21,3 +28,10 @@ export const TABLE_COLUMNS = [
 ];
 
 export const BRAND_STATUS = ["Active", "Inactive"] as const;
+
+export const CARD_ICONS = {
+  totalCount: BsFillClipboard2DataFill,
+  activeCount: MdOutlineWorkspacePremium,
+  expiredCount: TbCalendarCancel,
+  inactiveCount: MdOutlineDoNotDisturbOff,
+};

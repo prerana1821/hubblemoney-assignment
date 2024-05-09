@@ -7,6 +7,7 @@ interface LabeledTextareaProps
   label: string;
   error?: string | null;
   value?: string;
+  icon: any;
   name?: string;
   minLength?: number;
   onChange?: (
@@ -18,9 +19,21 @@ interface LabeledTextareaProps
 
 const LabeledTextarea = forwardRef<HTMLTextAreaElement, LabeledTextareaProps>(
   (
-    { label, value, onChange, error, name, minLength, className, ...props },
+    {
+      label,
+      value,
+      onChange,
+      error,
+      name,
+      minLength,
+      icon,
+      className,
+      ...props
+    },
     ref
   ) => {
+    const Icon = icon;
+
     return (
       <div className='mb-4'>
         <label htmlFor={props.id} className='mb-2 block text-sm font-medium'>
@@ -39,7 +52,7 @@ const LabeledTextarea = forwardRef<HTMLTextAreaElement, LabeledTextareaProps>(
               className
             )}
           />
-          <MdOutlinePersonOutline className='pointer-events-none absolute left-3 top-5 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900' />
+          <Icon className='pointer-events-none absolute left-3 top-5 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900' />
         </div>
         {error && (
           <div id={`${props.id}-error`} aria-live='polite' aria-atomic='true'>
