@@ -7,12 +7,13 @@
 
 <!-- - card analytics for metadata and vouchers -->
 
-- take all the breadcrumbs to constants
-- css
+<!-- - take all the breadcrumbs to constants -->
+<!-- - css -->
   <!-- - onhover hightlights -->
   <!-- - view details -->
   <!-- - Add remove highlight & FAQ -->
-- pagination
+
+<!-- - pagination -->
 
 ## Good to have
 

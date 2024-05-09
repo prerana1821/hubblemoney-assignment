@@ -6,6 +6,7 @@ import { formatDateToLocal } from "@/app/utils/string-manipulation";
 import Dropdown from "../shared/dropdown";
 import Pagination from "./pagination";
 import HighlightModal from "./highlight-modal";
+import getTotalRowCount from "@/app/actions/getTotalRowCount";
 
 export default async function DataTable({
   filters,
@@ -13,11 +14,9 @@ export default async function DataTable({
   filters: ServerSideFilters;
 }) {
   const metadata = await getFilteredMetadata(filters);
-  const limitedMetadata = metadata?.slice(0, +filters.tableRows);
+  const totalRowCount = await getTotalRowCount(filters);
 
-  const totalPages = Math.ceil(
-    Number(limitedMetadata.length) / +filters.tableRows
-  );
+  const totalPages = Math.ceil(Number(totalRowCount) / +filters.tableRows);
 
   return (
     <div className='mt-6 flow-root'>
@@ -33,7 +32,7 @@ export default async function DataTable({
               </tr>
             </thead>
             <tbody className='bg-white'>
-              {limitedMetadata?.map((data: TableData) => (
+              {metadata?.map((data: TableData) => (
                 <tr
                   key={`data-${data.voucherId}-${data.brandId}`}
                   className='w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg'

@@ -53,6 +53,7 @@ export interface BrandCategory {
 }
 
 export interface FilterFormData {
+  currentPage: number;
   brandName: string;
   brandStatus: string;
   expirationDate: string;

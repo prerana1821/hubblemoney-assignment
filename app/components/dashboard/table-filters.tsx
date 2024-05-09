@@ -20,6 +20,7 @@ const TableFilters = () => {
   const { replace } = useRouter();
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState<FilterFormData>({
+    currentPage: 1,
     brandName: "",
     brandCategory: {
       query: "",
@@ -38,13 +39,14 @@ const TableFilters = () => {
   });
 
   useEffect(() => {
+    const { currentPage, ...formDataWithoutPage } = formData;
     const queryParams = queryString.stringify(
       {
-        ...formData,
+        ...formDataWithoutPage,
         brandName: formData.brandName.length === 0 ? "" : debouncedValue,
         brandCategory: formData.brandCategory.selected,
         brandStatus: formData.brandStatus,
-        page: 1,
+        page: formData.currentPage,
       },
       {
         skipEmptyString: true,
@@ -55,6 +57,19 @@ const TableFilters = () => {
   }, [debouncedValue, formData, pathname, replace, formData.brandName]);
 
   useEffect(() => {
+    const currentPageFromParams = searchParams.get("page");
+    if (
+      currentPageFromParams !== null &&
+      !isNaN(parseInt(currentPageFromParams))
+    ) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        currentPage: parseInt(currentPageFromParams),
+      }));
+    } else {
+      setFormData((prevFormData) => ({ ...prevFormData, currentPage: 1 }));
+    }
+
     const brandNameFromParams = searchParams.get("brandName");
     if (brandNameFromParams !== null) {
       setFormData((prevFormData) => ({
