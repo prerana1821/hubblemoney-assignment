@@ -24,6 +24,7 @@ Welcome to the Brand Metadata and Voucher Management Dashboard! This dashboard p
 </p>
 
 ## Demo
+![screencapture-localhost-3000-dashboard-2024-05-10-19_02_43](https://github.com/prerana1821/hubblemoney-assignment/assets/61601706/595cf125-df69-4df7-b363-61c7dcccbb62)
 
 ## Features
 
