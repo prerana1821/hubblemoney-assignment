@@ -63,7 +63,7 @@ export function TableSkeleton() {
         <div className='rounded-lg bg-gray-50 p-2 md:pt-0'>
           <table className='min-w-full text-gray-900 table'>
             <thead className='rounded-lg text-left text-sm font-normal'>
-              <tr className='w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg'>
+              <tr className='w-full min-w-fit border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg'>
                 {renderTableHeaders(
                   TABLE_COLUMNS.map((column) => column.value)
                 )}
