@@ -1,10 +1,10 @@
 "use client";
 
+import { FC, useRef, useState } from "react";
+import Link from "next/link";
 import useOutsideClick from "@/hooks/useOutsideClick";
 import { useSessionContext } from "@supabase/auth-helpers-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { FC, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { FaEllipsis } from "react-icons/fa6";
 import { LuLayoutPanelLeft } from "react-icons/lu";
@@ -19,7 +19,7 @@ interface DropdownProps {
 const Dropdown: FC<DropdownProps> = ({ brandId, voucherId }) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const { supabaseClient } = useSessionContext();
 
   useOutsideClick(dropdownRef, () => setOpen(false));
@@ -36,6 +36,17 @@ const Dropdown: FC<DropdownProps> = ({ brandId, voucherId }) => {
     }
   };
 
+  const calculateDropdownPosition = () => {
+    if (dropdownRef.current) {
+      const dropdownRect = dropdownRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const bottomSpace = windowHeight - dropdownRect.bottom;
+      const isSpaceBelow = bottomSpace >= dropdownRect.height;
+      return isSpaceBelow ? "bottom-0" : "top-0";
+    }
+    return "";
+  };
+
   return (
     <div ref={dropdownRef} className='hs-dropdown relative inline-flex'>
       <div
@@ -45,7 +56,9 @@ const Dropdown: FC<DropdownProps> = ({ brandId, voucherId }) => {
         <FaEllipsis className='h-[18px] w-[18px]' />
       </div>
       {open && (
-        <div className='hs-dropdown-menu absolute right-1 transition-[opacity,margin] duration  min-w-40 bg-white shadow-md rounded-lg p-2 mt-2 divide-y divide-gray-200 z-50'>
+        <div
+          className={`hs-dropdown-menu absolute right-1 transition-[opacity,margin] duration min-w-40 bg-white shadow-md rounded-lg p-2 mt-2 divide-y divide-gray-200 z-50 ${calculateDropdownPosition()}`}
+        >
           <div className='py-2 first:pt-0 last:pb-0'>
             <span className='block py-2 px-3 text-xs font-medium uppercase text-gray-400'>
               Brand

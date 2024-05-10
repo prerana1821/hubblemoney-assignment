@@ -113,6 +113,7 @@ const MultiSelectorChip: React.FC<MultiSelectorChipProps> = ({
                       setMenuOpen(false);
                       setSelected(tag);
                       setQuery("");
+                      inputRef.current?.blur();
                     }}
                   >
                     {tag}

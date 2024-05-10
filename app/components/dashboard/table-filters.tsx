@@ -106,12 +106,12 @@ const TableFilters = () => {
           <option value='' disabled>
             Select a status
           </option>
+          <option value=''>All statuses</option>
           {BRAND_STATUS.map((status) => (
             <option value={status} key={status}>
               {status}
             </option>
           ))}
-          <option value=''>All statuses</option>
         </LabeledSelect>
         <LabeledInput
           id='expirationDate'
