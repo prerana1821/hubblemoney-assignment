@@ -50,6 +50,8 @@ const CheckboxList: React.FC<CheckboxListProps> = ({
     if (updatedCheckedItems.length === 3) {
       toast.error("You need to select at least three items.");
     }
+
+    setMenuOpen(true);
   };
 
   return (

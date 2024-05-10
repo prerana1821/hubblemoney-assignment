@@ -27,34 +27,35 @@ Welcome to the Brand Metadata and Voucher Management Dashboard! This dashboard p
 
 ## Features
 
-- **Dashboard**:
+**Dashboard**:
 
-  - **Brand Name Search**: Effortlessly locate brands by their name using the search feature.
-  - **Brand Category Selection**: Utilize a multi-select option with integrated search functionality to filter brands by category.
-  - **Brand Status Filtering**: Easily filter brands based on their status (active, inactive, etc.) using a dropdown menu.
-  - **Minimum Voucher Expiration Date**: Define the minimum expiration date for vouchers with a convenient input field.
-  - **Minimum Voucher Discount Percentage**: Set the minimum discount percentage for vouchers using a dedicated input field.
-  - **Column Visibility Toggle**: Customize your table view by toggling the visibility of columns, excluding the brand name, with a checkbox list.
-  - **Rows per Page Control**: Tailor your viewing experience by selecting the desired number of rows to display per page from a dropdown menu.
-  - **Pagination**: Seamlessly navigate through multiple pages of brands and vouchers for enhanced usability.
-  - **URL-Based Filtering**: Leverage URL parameters to effortlessly apply specific filters and configurations, ensuring a personalized experience.
+- **Brand Name Search**: Effortlessly locate brands by their name using the search feature.
+- **Brand Category Selection**: Utilize a multi-select option with integrated search functionality to filter brands by category.
+- **Brand Status Filtering**: Easily filter brands based on their status (active, inactive, etc.) using a dropdown menu.
+- **Minimum Voucher Expiration Date**: Define the minimum expiration date for vouchers with a convenient input field.
+- **Minimum Voucher Discount Percentage**: Set the minimum discount percentage for vouchers using a dedicated input field.
+- **Column Visibility Toggle**: Customize your table view by toggling the visibility of columns, excluding the brand name, with a checkbox list.
+- **Rows per Page Control**: Tailor your viewing experience by selecting the desired number of rows to display per page from a dropdown menu.
+- **Pagination**: Seamlessly navigate through multiple pages of brands and vouchers for enhanced usability.
+- **URL-Based Filtering**: Leverage URL parameters to effortlessly apply specific filters and configurations, ensuring a personalized experience.
 
-- **Brand Management**:
+**Brand Management**:
 
-  - **View**: Gain insights into brand details and imagery effortlessly.
-  - **Create**: Introduce new brands into the system with ease, including image upload functionality.
-  - **Update**: Modify existing brand information seamlessly, including logo updates.
-  - **Delete**: Remove brands from the database effortlessly, ensuring data cleanliness.
+- **View**: Gain insights into brand details and imagery effortlessly.
+- **Create**: Introduce new brands into the system with ease, including image upload functionality.
+- **Update**: Modify existing brand information seamlessly, including logo updates.
+- **Delete**: Remove brands from the database effortlessly, ensuring data cleanliness.
 
-- **Voucher Management**:
+**Voucher Management**:
 
-  - **View**: Explore voucher details and associated imagery effortlessly.
-  - **Create**: Generate new vouchers effortlessly, complete with image upload capabilities.
-  - **Update**: Modify existing voucher details seamlessly, including banner updates.
-  - **Delete**: Remove vouchers from the database with ease, maintaining data integrity.
+- **View**: Explore voucher details and associated imagery effortlessly.
+- **Create**: Generate new vouchers effortlessly, complete with image upload capabilities.
+- **Update**: Modify existing voucher details seamlessly, including banner updates.
+- **Delete**: Remove vouchers from the database with ease, maintaining data integrity.
 
-- **Data Insights**:
-  - **Metrics Overview**: Access key metrics such as total brands, active/inactive brands, total vouchers, expired vouchers, and more for comprehensive data insights.
+**Data Insights**:
+
+- **Metrics Overview**: Access key metrics such as total brands, active/inactive brands, total vouchers, expired vouchers, and more for comprehensive data insights.
 
 ## Getting Started
 

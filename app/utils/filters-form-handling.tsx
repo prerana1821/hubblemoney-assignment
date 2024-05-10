@@ -46,9 +46,25 @@ export const handleCheckboxChange = (
       (column) => column === value.value
     );
 
-    const updatedSelectedColumns = selectedValue
-      ? prevFormData.selectedColumns.filter((column) => column !== value.value)
-      : [...prevFormData.selectedColumns, value.value];
+    const indexToAdd = TABLE_COLUMNS.findIndex(
+      (column) => column.value === value.value
+    );
+    if (indexToAdd === -1) {
+      return prevFormData;
+    }
+
+    let updatedSelectedColumns;
+    if (selectedValue) {
+      updatedSelectedColumns = prevFormData.selectedColumns.filter(
+        (column) => column !== value.value
+      );
+    } else {
+      updatedSelectedColumns = [
+        ...prevFormData.selectedColumns.slice(0, indexToAdd),
+        value.value,
+        ...prevFormData.selectedColumns.slice(indexToAdd),
+      ];
+    }
 
     return {
       ...prevFormData,

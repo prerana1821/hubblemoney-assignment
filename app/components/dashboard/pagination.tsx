@@ -1,10 +1,7 @@
 "use client";
 
-import clsx from "clsx";
-import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { generatePagination } from "@/app/utils/table-data-handling";
-import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import PaginationNumber from "./pagination-number";
 import PaginationArrow from "./pagination-arrow";
 

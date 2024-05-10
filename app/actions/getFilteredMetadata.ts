@@ -1,9 +1,4 @@
-import {
-  BrandDataFromDB,
-  Highlight,
-  ServerSideFilters,
-  TableData,
-} from "@/types/app";
+import { Highlight, ServerSideFilters, TableData } from "@/types/app";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 
@@ -26,8 +21,6 @@ const getFilteredMetadata = async (filters: ServerSideFilters) => {
     let voucherQuery = supabase
       .from("vouchers")
       .select("id, brand_id, highlights, expiration_date, discount_percentage");
-    // .range(offset, offset + limit - 1)
-    // .order("created_at", { ascending: false });
 
     if (expirationDate) {
       voucherQuery.lte("expiration_date", expirationDate);
@@ -118,9 +111,11 @@ const getFilteredMetadata = async (filters: ServerSideFilters) => {
       }
     });
 
-    const orderedAndLimitedBrands = tableData.slice(offset, offset + limit);
-
-    return orderedAndLimitedBrands;
+    if (tableData.length > limit) {
+      return tableData.slice(offset, offset + limit);
+    } else {
+      return tableData;
+    }
   } catch (error) {
     console.error("Supabase Error:", error);
     throw new Error("Failed to fetch data.");
