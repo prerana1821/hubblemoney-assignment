@@ -1,5 +1,4 @@
 import { forwardRef } from "react";
-import { MdOutlinePersonOutline } from "react-icons/md";
 import { twMerge } from "tailwind-merge";
 import { TiDeleteOutline } from "react-icons/ti";
 

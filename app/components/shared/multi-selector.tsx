@@ -18,7 +18,6 @@ const MultiSelectorChip: React.FC<MultiSelectorChipProps> = ({
   removeTag,
 }) => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
-
   const inputRef = useRef<HTMLInputElement>(null);
 
   const filteredTags = CATEGORIES.filter(

@@ -19,8 +19,8 @@ export default async function Page({ params }: { params: { id: string } }) {
     notFound();
   }
 
-  // Fetch the banner URL asynchronously
   const bannerUrl = await getImage(voucherDetails.banner_path, "vouchers");
+
   return (
     <main>
       <Breadcrumbs

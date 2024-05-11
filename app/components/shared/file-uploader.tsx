@@ -75,21 +75,25 @@ export default function FileUploader({
     }
 
     if (files && files.length) {
-      // TODO: write try catch
-      const nFiles = Array.from(files).map(async (file) => {
-        const base64String = await convertFileBase64(file);
-        return {
-          name: file.name,
-          photo: base64String,
-          type: file.type,
-          size: file.size,
-          file: file,
-        };
-      });
+      try {
+        const nFiles = Array.from(files).map(async (file) => {
+          const base64String = await convertFileBase64(file);
+          return {
+            name: file.name,
+            photo: base64String,
+            type: file.type,
+            size: file.size,
+            file: file,
+          };
+        });
 
-      Promise.all(nFiles).then((newFiles) => {
-        onUpload(newFiles, id);
-      });
+        Promise.all(nFiles).then((newFiles) => {
+          onUpload(newFiles, id);
+        });
+      } catch (error) {
+        console.error("Error uploading files:", error);
+        toast.error("Error uploading files. Please try again.");
+      }
     }
   }
 

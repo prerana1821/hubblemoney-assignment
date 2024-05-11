@@ -1,5 +1,15 @@
-import { StorageType, TableData } from "@/types/app";
-import { COLUMN_NAMES, TABLE_COLUMNS } from "./constants";
+import {
+  BrandDataFromDB,
+  Highlight,
+  StorageType,
+  TableData,
+} from "@/types/app";
+import {
+  BRAND_STATUS,
+  CATEGORIES,
+  COLUMN_NAMES,
+  TABLE_COLUMNS,
+} from "./constants";
 import HighlightModal from "../components/dashboard/highlight-modal";
 import { formatDateToLocal } from "./string-manipulation";
 import { BrandLogo } from "../components/dashboard/brand-logo";
@@ -69,27 +79,22 @@ export const getStorageType = (type: StorageType): string => {
 };
 
 export const generatePagination = (currentPage: number, totalPages: number) => {
-  // If the total number of pages is 7 or less,
-  // display all pages without any ellipsis.
+  // if the total number of pages is 7 or less, display all pages without any ellipsis.
   if (totalPages <= 7) {
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 
-  // If the current page is among the first 3 pages,
-  // show the first 3, an ellipsis, and the last 2 pages.
+  // if the current page is among the first 3 pages, show the first 3, an ellipsis, and the last 2 pages.
   if (currentPage <= 3) {
     return [1, 2, 3, "...", totalPages - 1, totalPages];
   }
 
-  // If the current page is among the last 3 pages,
-  // show the first 2, an ellipsis, and the last 3 pages.
+  // if the current page is among the last 3 pages, show the first 2, an ellipsis, and the last 3 pages.
   if (currentPage >= totalPages - 2) {
     return [1, 2, "...", totalPages - 2, totalPages - 1, totalPages];
   }
 
-  // If the current page is somewhere in the middle,
-  // show the first page, an ellipsis, the current page and its neighbors,
-  // another ellipsis, and the last page.
+  // if the current page is somewhere in the middle, show the first page, an ellipsis, the current page and its neighbors, another ellipsis, and the last page.
   return [
     1,
     "...",
@@ -99,4 +104,101 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
     "...",
     totalPages,
   ];
+};
+
+interface FilteredBrand {
+  id: string;
+  name: string;
+  category: (typeof CATEGORIES)[number];
+  status: (typeof BRAND_STATUS)[number];
+  logo_path: string;
+}
+
+interface FilteredVoucher {
+  id: string;
+  brand_id: string;
+  highlights: string;
+  expiration_date: string;
+  discount_percentage: string;
+}
+
+export const formatTableData = ({
+  brands,
+  vouchers,
+}: {
+  brands: FilteredBrand[];
+  vouchers: FilteredVoucher[];
+}) => {
+  const tableData = brands.flatMap((brand) => {
+    const foundVouchers = vouchers.filter(
+      (voucher) => voucher.brand_id === brand.id
+    );
+
+    const emptyVoucherBrand: TableData = {
+      brandId: brand.id,
+      brandName: brand.name,
+      brandLogoPath: brand.logo_path,
+      brandStatus: brand.status,
+      brandCategory: brand.category,
+      highlights: [],
+      expirationDate: "",
+      discountPercentage: "",
+    };
+
+    if (foundVouchers.length === 0) {
+      return [emptyVoucherBrand];
+    } else {
+      return foundVouchers.map((foundVoucher) => {
+        let parsedHighlight: string[] = [];
+        if (foundVoucher.highlights) {
+          const parsedHighlights = JSON.parse(foundVoucher.highlights) as {
+            list: Highlight[];
+          };
+          parsedHighlight = parsedHighlights.list.map(
+            (listItem) => listItem.title
+          );
+        }
+
+        return {
+          ...emptyVoucherBrand,
+          voucherId: foundVoucher.id,
+          highlights: parsedHighlight,
+          expirationDate: foundVoucher.expiration_date || "",
+          discountPercentage: foundVoucher.discount_percentage || "",
+        };
+      });
+    }
+  });
+
+  return tableData;
+};
+
+export const formatTableDataForRowCount = ({
+  brands,
+  vouchers,
+}: {
+  brands: { id: string }[];
+  vouchers: { id: string; brand_id: string }[];
+}) => {
+  const tableData = brands.flatMap((brand) => {
+    const foundVouchers = vouchers.filter(
+      (voucher) => voucher.brand_id === brand.id
+    );
+
+    if (foundVouchers.length === 0) {
+      const emptyVoucherBrand = {
+        brandId: brand.id,
+      };
+      return [emptyVoucherBrand];
+    } else {
+      return foundVouchers.map((foundVoucher) => {
+        return {
+          brandId: brand.id,
+          voucherId: foundVoucher.id,
+        };
+      });
+    }
+  });
+
+  return tableData;
 };

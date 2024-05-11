@@ -1,6 +1,7 @@
+import { formatTableDataForRowCount } from "@/app/utils/table-data-handling";
 import { ServerSideFilters } from "@/types/app";
 import { useSessionContext } from "@supabase/auth-helpers-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const useTotalRowCount = (filters: ServerSideFilters) => {
   const [totalRowCount, setTotalRowCount] = useState(0);
@@ -75,25 +76,7 @@ const useTotalRowCount = (filters: ServerSideFilters) => {
           throw new Error("Failed to fetch brands.");
         }
 
-        const tableData = brands.flatMap((brand) => {
-          const foundVouchers = vouchers.filter(
-            (voucher) => voucher.brand_id === brand.id
-          );
-
-          if (foundVouchers.length === 0) {
-            const emptyVoucherBrand = {
-              brandId: brand.id,
-            };
-            return [emptyVoucherBrand];
-          } else {
-            return foundVouchers.map((foundVoucher) => {
-              return {
-                brandId: brand.id,
-                voucherId: foundVoucher.id,
-              };
-            });
-          }
-        });
+        const tableData = formatTableDataForRowCount({ brands, vouchers });
 
         const totalCount = tableData.length;
         setTotalRowCount(totalCount);
@@ -108,7 +91,13 @@ const useTotalRowCount = (filters: ServerSideFilters) => {
     fetchTotalRowCount();
   }, [filters, supabaseClient]);
 
-  return { totalRowCount, loading };
+  return useMemo(
+    () => ({
+      totalRowCount,
+      loading,
+    }),
+    [totalRowCount, loading]
+  );
 };
 
 export default useTotalRowCount;
