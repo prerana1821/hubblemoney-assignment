@@ -1,4 +1,4 @@
-import { BrandData, BrandDataFromDB } from "@/types/app";
+import { BrandDataFromDB } from "@/types/app";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 
