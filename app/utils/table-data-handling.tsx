@@ -1,9 +1,4 @@
-import {
-  BrandDataFromDB,
-  Highlight,
-  StorageType,
-  TableData,
-} from "@/types/app";
+import { Highlight, StorageType, TableData } from "@/types/app";
 import {
   BRAND_STATUS,
   CATEGORIES,

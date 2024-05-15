@@ -1,14 +1,8 @@
-import {
-  BrandDataFromDB,
-  BrandFormState,
-  HandleFormSubmitParams,
-} from "@/types/app";
+import { BrandFormState, HandleFormSubmitParams } from "@/types/app";
 import { ChangeEvent, Dispatch, FormEvent, SetStateAction } from "react";
 import toast from "react-hot-toast";
 import uniqid from "uniqid";
 import { handleFormValidations } from "./file-handling";
-import { SupabaseClient } from "@supabase/supabase-js";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 export const defaultAddBrandFormState: BrandFormState = {
   logo: { name: "", photo: "", type: "", size: 0, file: null, error: null },
