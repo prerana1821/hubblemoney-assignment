@@ -14,21 +14,25 @@ import { useEffect, useState } from "react";
 
 export default function DataTable({ filters }: { filters: ServerSideFilters }) {
   const { metadata, loading: metadataLoading } = useFilteredMetadata(filters);
-  const { totalRowCount, loading: totalRowCountLoading } =
-    useTotalRowCount(filters);
+  // const { totalRowCount, loading: totalRowCountLoading } =
+  //   useTotalRowCount(filters);
+
+  console.log("Calling");
 
   const [totalPages, setTotalPages] = useState(0);
 
-  useEffect(() => {
-    const totalPages = Math.ceil(Number(totalRowCount) / +filters.tableRows);
-    setTotalPages(totalPages);
-  }, [totalRowCount, filters.tableRows]);
+  // useEffect(() => {
+  //   const totalPages = Math.ceil(Number(totalRowCount) / +filters.tableRows);
+  //   console.log("Calling 1");
+
+  //   setTotalPages(totalPages);
+  // }, [totalRowCount, filters.tableRows]);
 
   return (
     <div className='mt-6 flow-root'>
       <div className='inline-block min-w-full align-middle'>
         <div className='rounded-lg bg-gray-50 p-2 md:pt-0'>
-          {metadataLoading || totalRowCountLoading ? (
+          {metadataLoading ? (
             <TableSkeleton />
           ) : (
             <table className='hidden min-w-full text-gray-900 md:table'>
@@ -61,11 +65,11 @@ export default function DataTable({ filters }: { filters: ServerSideFilters }) {
             </table>
           )}
 
-          <div className='mt-5 flex w-full justify-center'>
+          {/* <div className='mt-5 flex w-full justify-center'>
             {!metadataLoading && !totalRowCountLoading && (
               <Pagination totalPages={totalPages} />
             )}
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

@@ -37,6 +37,8 @@ const TableFilters = () => {
     filterFormInitialState
   );
 
+  console.log("Calling Filters");
+
   const debouncedValue = useDebounce({
     value: formData.brandName,
     delay: 300,
@@ -59,8 +61,10 @@ const TableFilters = () => {
       }
     );
 
+    console.log("HERE");
+
     replace(`${pathname}${queryParams ? "?" + queryParams : ""}`);
-  }, [debouncedValue, formData, pathname, replace, formData.brandName]);
+  }, [debouncedValue, formData]);
 
   useEffect(() => {
     searchParams.forEach((value, key) =>
