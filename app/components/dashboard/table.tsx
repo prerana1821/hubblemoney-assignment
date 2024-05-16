@@ -14,19 +14,16 @@ import { useEffect, useState } from "react";
 
 export default function DataTable({ filters }: { filters: ServerSideFilters }) {
   const { metadata, loading: metadataLoading } = useFilteredMetadata(filters);
-  // const { totalRowCount, loading: totalRowCountLoading } =
-  //   useTotalRowCount(filters);
-
-  console.log("Calling");
+  const { totalRowCount, loading: totalRowCountLoading } =
+    useTotalRowCount(filters);
 
   const [totalPages, setTotalPages] = useState(0);
 
-  // useEffect(() => {
-  //   const totalPages = Math.ceil(Number(totalRowCount) / +filters.tableRows);
-  //   console.log("Calling 1");
+  useEffect(() => {
+    const totalPages = Math.ceil(Number(totalRowCount) / +filters.tableRows);
 
-  //   setTotalPages(totalPages);
-  // }, [totalRowCount, filters.tableRows]);
+    setTotalPages(totalPages);
+  }, [totalRowCount, filters.tableRows]);
 
   return (
     <div className='mt-6 flow-root'>
@@ -65,11 +62,11 @@ export default function DataTable({ filters }: { filters: ServerSideFilters }) {
             </table>
           )}
 
-          {/* <div className='mt-5 flex w-full justify-center'>
+          <div className='mt-5 flex w-full justify-center'>
             {!metadataLoading && !totalRowCountLoading && (
               <Pagination totalPages={totalPages} />
             )}
-          </div> */}
+          </div>
         </div>
       </div>
     </div>

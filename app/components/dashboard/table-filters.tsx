@@ -37,8 +37,6 @@ const TableFilters = () => {
     filterFormInitialState
   );
 
-  console.log("Calling Filters");
-
   const debouncedValue = useDebounce({
     value: formData.brandName,
     delay: 300,
@@ -60,8 +58,6 @@ const TableFilters = () => {
         skipEmptyString: true,
       }
     );
-
-    console.log("HERE");
 
     replace(`${pathname}${queryParams ? "?" + queryParams : ""}`);
   }, [debouncedValue, formData]);
@@ -107,9 +103,7 @@ const TableFilters = () => {
           onChange={(e) => handleInputChange(e, setFormData)}
           icon={GrStatusGood}
         >
-          <option value='' disabled>
-            Select a status
-          </option>
+          <option value=''>All statuses</option>
           {BRAND_STATUS.map((status) => (
             <option value={status} key={status}>
               {status}

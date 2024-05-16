@@ -8,8 +8,6 @@ const useFilteredMetadata = (filters: ServerSideFilters) => {
   const [loading, setLoading] = useState(true);
   const { supabaseClient } = useSessionContext();
 
-  console.log("Calling 2");
-
   useEffect(() => {
     const fetchMetadata = async () => {
       setLoading(true);

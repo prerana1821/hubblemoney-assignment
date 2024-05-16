@@ -26,28 +26,26 @@ export default async function Page({
   const selectedColumns = searchParams?.selectedColumns || [];
   const tableRows = searchParams?.tableRows || "";
 
-  console.log("Calling Root");
-
   return (
     <main>
       <h1 className={"mb-4 text-xl md:text-2xl"}>Dashboard</h1>
       <div className='mt-4 flex flex-col gap-2 md:mt-8'>
         <TableFilters />
       </div>
-      {/* <Suspense fallback={<TableSkeleton />}> */}
-      <DataTable
-        filters={{
-          currentPage,
-          brandName,
-          brandCategory,
-          brandStatus,
-          expirationDate,
-          discountPercentage,
-          selectedColumns,
-          tableRows,
-        }}
-      />
-      {/* </Suspense> */}
+      <Suspense fallback={<TableSkeleton />}>
+        <DataTable
+          filters={{
+            currentPage,
+            brandName,
+            brandCategory,
+            brandStatus,
+            expirationDate,
+            discountPercentage,
+            selectedColumns,
+            tableRows,
+          }}
+        />
+      </Suspense>
     </main>
   );
 }
